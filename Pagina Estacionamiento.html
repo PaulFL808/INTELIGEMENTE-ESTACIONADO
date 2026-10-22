@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inteligentemente Estacionado</title>
+<meta name="description" content="Estacionamiento inteligente: disponibilidad en tiempo real, registro de ingresos y salidas, cobro automático por minuto y gestión completa de vehículos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E7E8E3;
+  --surface:#F7F7F4;
+  --ink:#1E2226;
+  --muted:#5A6269;
+  --rule:#C9CBC4;
+  --asphalt:#2C3136;
+  --asphalt-2:#363C42;
+  --paint:#F2C230;
+  --sign:#1F4FA3;
+  --sign-ink:#FFFFFF;
+  --free:#2F8F55;
+  --busy:#C23F3B;
+  --focus:#1F4FA3;
+  --radius-s:4px;
+  --radius-m:8px;
+  --display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"Barlow",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16191C; --surface:#1F2327; --ink:#E6E8E3; --muted:#9AA2A9; --rule:#353B41;
+    --asphalt:#262B30; --asphalt-2:#30363C; --sign:#4E7FD6; --free:#45B072; --busy:#E0605B; --focus:#8DB0F0;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16191C; --surface:#1F2327; --ink:#E6E8E3; --muted:#9AA2A9; --rule:#353B41;
+  --asphalt:#262B30; --asphalt-2:#30363C; --sign:#4E7FD6; --free:#45B072; --busy:#E0605B; --focus:#8DB0F0;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto} *{transition:none!important;animation:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+h1,h2,h3{font-family:var(--display);line-height:1.02;margin:0;letter-spacing:-.005em}
+h2{font-size:clamp(2rem,4.2vw,3rem);font-weight:800}
+h3{font-size:1.45rem;font-weight:700}
+p{margin:0}
+.lead{color:var(--muted);max-width:60ch;margin-top:.75rem}
+
+/* Header */
+.top{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--rule)}
+.top .wrap{display:flex;align-items:center;gap:20px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-weight:800;font-size:1.35rem}
+.psign{display:grid;place-items:center;width:36px;height:36px;border-radius:var(--radius-s);background:var(--sign);color:var(--sign-ink);font-family:var(--display);font-weight:800;font-size:1.6rem;line-height:1;border:2px solid #fff;box-shadow:0 0 0 2px var(--sign)}
+.nav{display:flex;gap:4px;margin-left:auto}
+.nav a{text-decoration:none;padding:8px 12px;border-radius:var(--radius-s);font-weight:500;color:var(--muted)}
+.nav a:hover{color:var(--ink);background:var(--surface)}
+.theme-btn{border:1px solid var(--rule);background:transparent;color:var(--ink);border-radius:var(--radius-s);width:38px;height:38px;cursor:pointer;display:grid;place-items:center}
+@media (max-width:760px){.nav{display:none}.theme-btn{margin-left:auto}}
+
+/* Buttons */
+.btn{font:600 1rem var(--body);border-radius:var(--radius-s);padding:10px 16px;border:2px solid transparent;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none;white-space:nowrap}
+.btn-primary{background:var(--sign);color:var(--sign-ink)}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-ghost{background:transparent;border-color:var(--ink);color:var(--ink)}
+.btn-ghost:hover{background:var(--ink);color:var(--bg)}
+.btn-danger{background:var(--busy);color:#fff}
+.btn-sm{padding:5px 10px;font-size:.9rem;border-width:1px}
+.btn-link{background:none;border:none;color:var(--sign);font:600 .92rem var(--body);cursor:pointer;padding:4px 6px;border-radius:var(--radius-s)}
+.btn-link:hover{text-decoration:underline}
+.btn-link.danger{color:var(--busy)}
+
+/* Hero */
+.hero{padding:48px 0 64px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:start}
+.hero h1{font-size:clamp(2.8rem,6.4vw,5.2rem);font-weight:800;text-transform:none}
+.hero .lead{font-size:1.1rem}
+.counts{display:grid;grid-template-columns:repeat(3,1fr);margin:28px 0;border-top:3px solid var(--ink)}
+.count{padding:12px 12px 0 0}
+.count + .count{padding-left:12px;border-left:1px solid var(--rule)}
+.count b{display:block;font-family:var(--display);font-size:2.6rem;line-height:1;font-weight:800}
+.count span{color:var(--muted);font-size:.95rem}
+.count.free b{color:var(--free)}
+.count.busy b{color:var(--busy)}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px}
+@media (max-width:900px){.hero-grid{grid-template-columns:1fr}}
+
+/* Lot map */
+.lot{background:var(--asphalt);border-radius:var(--radius-m);padding:18px;color:#E9EBE7;position:relative}
+.lot-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.lot-head h3{color:#fff;font-size:1.3rem}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;color:#C4C9CD}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.row{display:grid;grid-template-columns:repeat(8,1fr);border-left:2px solid var(--paint)}
+.lane{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;color:var(--paint);font-family:var(--display);font-weight:700;letter-spacing:.04em;font-size:.95rem;background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(242,194,48,.55) 22px 40px) center/100% 2px no-repeat}
+.lane span{background:var(--asphalt);padding:0 8px}
+.spot{position:relative;aspect-ratio:3/5;border-right:2px solid var(--paint);border:none;border-right:2px solid var(--paint);background:transparent;cursor:pointer;color:#D7DBDE;font-family:var(--display);padding:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between}
+.row.top-row .spot{border-bottom:2px solid var(--paint);padding-top:6px;padding-bottom:4px}
+.row.bot-row .spot{border-top:2px solid var(--paint);flex-direction:column-reverse;padding-bottom:6px;padding-top:4px}
+.spot:hover{background:var(--asphalt-2)}
+.spot .code{font-weight:700;font-size:.95rem;line-height:1}
+.spot .kind{font-size:.7rem;line-height:1;opacity:.85;height:14px;display:flex;align-items:center}
+.spot .kind svg{width:14px;height:14px}
+.spot .dot{width:9px;height:9px;border-radius:50%;background:var(--free);box-shadow:0 0 0 3px rgba(47,143,85,.25)}
+.spot.busy .dot{background:var(--busy);box-shadow:0 0 0 3px rgba(194,63,59,.28)}
+.spot.accesible{background:rgba(31,79,163,.22)}
+.spot.electrico{background:rgba(47,143,85,.14)}
+.spot.moto{background:rgba(242,194,48,.08)}
+.car{position:absolute;left:18%;right:18%;top:24%;bottom:24%;border-radius:7px 7px 6px 6px;background:var(--car,#7A8590);box-shadow:inset 0 0 0 1px rgba(0,0,0,.25)}
+.car::before{content:"";position:absolute;left:12%;right:12%;top:16%;height:20%;background:rgba(20,26,32,.75);border-radius:3px}
+.car::after{content:"";position:absolute;left:12%;right:12%;bottom:12%;height:14%;background:rgba(20,26,32,.6);border-radius:3px}
+.row.bot-row .car{transform:rotate(180deg)}
+.car.moto-shape{left:36%;right:36%;top:28%;bottom:28%;border-radius:10px}
+.car.moto-shape::before,.car.moto-shape::after{left:20%;right:20%}
+.spot .plate{position:absolute;left:50%;transform:translateX(-50%);bottom:50%;translate:0 50%;background:#fff;color:#111;font:700 .62rem/1 var(--body);padding:2px 3px;border-radius:2px;white-space:nowrap;z-index:1;letter-spacing:.02em}
+.spot.just{animation:park .6s ease-out}
+@keyframes park{from{background:rgba(242,194,48,.35)}to{background:transparent}}
+.entry{display:flex;justify-content:space-between;margin-top:12px;font-size:.85rem;color:#C4C9CD}
+.barrier{display:inline-flex;align-items:center;gap:8px}
+.barrier i{width:44px;height:6px;background:repeating-linear-gradient(90deg,#fff 0 8px,var(--busy) 8px 16px);border-radius:3px;transform-origin:left center;transition:transform .5s}
+.barrier.open i{transform:rotate(-70deg)}
+@media (max-width:560px){
+  .lot{padding:12px}
+  .spot .code{font-size:.78rem}
+  .spot .plate{font-size:.5rem;padding:1px 2px}
+  .lane{height:44px;font-size:.8rem}
+}
+
+/* Sections */
+section.block{padding:72px 0;border-top:1px solid var(--rule)}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:end;margin-bottom:36px}
+@media (max-width:760px){.sec-head{grid-template-columns:1fr}}
+
+/* Steps */
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);counter-reset:step;position:relative}
+.steps li{counter-increment:step;padding:0 18px 0 0;position:relative}
+.steps li::before{content:counter(step);display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--surface);border:2px solid var(--ink);font-family:var(--display);font-weight:800;font-size:1.4rem;margin-bottom:14px;position:relative;z-index:1}
+.steps li::after{content:"";position:absolute;top:21px;left:44px;right:0;height:2px;background:repeating-linear-gradient(90deg,var(--ink) 0 8px,transparent 8px 14px)}
+.steps li:last-child::after{display:none}
+.steps h3{font-size:1.3rem;margin-bottom:6px}
+.steps p{color:var(--muted);font-size:.97rem}
+@media (max-width:900px){
+  .steps{grid-template-columns:1fr;gap:22px}
+  .steps li{padding:0 0 0 62px;min-height:44px}
+  .steps li::before{position:absolute;left:0;top:0;margin:0}
+  .steps li::after{left:21px;top:44px;width:2px;height:calc(100% - 22px);right:auto;background:repeating-linear-gradient(180deg,var(--ink) 0 8px,transparent 8px 14px)}
+}
+
+/* Features */
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:2px solid var(--ink)}
+.feat{padding:22px 22px 26px 0;border-bottom:1px solid var(--rule)}
+.feat:not(:nth-child(3n+1)){padding-left:22px;border-left:1px solid var(--rule)}
+.feat svg{width:30px;height:30px;color:var(--sign);margin-bottom:10px}
+.feat h3{font-size:1.3rem;margin-bottom:6px}
+.feat p{color:var(--muted);font-size:.97rem}
+@media (max-width:900px){
+  .features{grid-template-columns:1fr 1fr}
+  .feat:not(:nth-child(3n+1)){padding-left:0;border-left:none}
+  .feat:nth-child(2n){padding-left:22px;border-left:1px solid var(--rule)}
+}
+@media (max-width:560px){
+  .features{grid-template-columns:1fr}
+  .feat:nth-child(2n){padding-left:0;border-left:none}
+}
+
+/* Panel */
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius-m)}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:14px;border-bottom:1px solid var(--rule)}
+.toolbar .grow{flex:1 1 220px}
+input,select{font:500 1rem var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--rule);border-radius:var(--radius-s);padding:9px 11px;width:100%}
+input:focus,select:focus{border-color:var(--focus)}
+.tabs{display:inline-flex;border:1px solid var(--rule);border-radius:var(--radius-s);overflow:hidden}
+.tabs button{font:600 .92rem var(--body);background:transparent;color:var(--muted);border:none;padding:9px 12px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.table-wrap{overflow-x:auto;position:relative}
+table{width:100%;border-collapse:collapse;font-size:.95rem;min-width:820px}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:.85rem;padding:10px 14px;border-bottom:1px solid var(--rule)}
+td{padding:11px 14px;border-bottom:1px solid var(--rule);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.plate-chip{display:inline-block;background:#fff;color:#111;border:1.5px solid #111;border-radius:3px;padding:1px 7px;font-weight:700;letter-spacing:.06em;font-size:.9rem}
+.badge{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:.88rem}
+.badge::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--busy)}
+.badge.done{color:var(--muted)}
+.badge.done::before{background:var(--muted)}
+.actions{display:flex;gap:2px;flex-wrap:nowrap}
+.empty{padding:40px 16px;text-align:center;color:var(--muted)}
+.empty .btn{margin-top:12px}
+.num{font-variant-numeric:tabular-nums}
+
+.panel-foot{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--rule)}
+.panel-foot div{padding:14px}
+.panel-foot div + div{border-left:1px solid var(--rule)}
+.panel-foot b{display:block;font-family:var(--display);font-size:1.7rem;line-height:1.1}
+.panel-foot span{color:var(--muted);font-size:.88rem}
+@media (max-width:700px){.panel-foot{grid-template-columns:1fr 1fr}.panel-foot div:nth-child(3){border-left:none}.panel-foot div:nth-child(n+3){border-top:1px solid var(--rule)}}
+
+/* Rates */
+.rates{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:start}
+.rate-form{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field label{display:block;font-weight:600;font-size:.92rem;margin-bottom:5px}
+.field small{display:block;color:var(--muted);font-size:.82rem;margin-top:4px}
+.field.full{grid-column:1/-1}
+.rate-form .btns{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap}
+.calc{background:var(--asphalt);color:#E9EBE7;border-radius:var(--radius-m);padding:22px}
+.calc h3{color:#fff;margin-bottom:12px}
+.calc label{color:#C4C9CD}
+.calc input,.calc select{background:var(--asphalt-2);color:#fff;border-color:#4A5157}
+.calc .result{margin-top:16px;padding-top:14px;border-top:2px dashed var(--paint);display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.calc .result b{font-family:var(--display);font-size:2.4rem;color:var(--paint)}
+.calc .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:900px){.rates{grid-template-columns:1fr}}
+@media (max-width:480px){.rate-form,.calc .grid2{grid-template-columns:1fr}}
+
+/* Dialog */
+dialog{border:none;border-radius:var(--radius-m);padding:0;width:min(520px,calc(100vw - 32px));background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(20,24,28,.55)}
+.dlg-head{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--rule)}
+.dlg-head h3{font-size:1.5rem}
+.x{background:none;border:none;font-size:1.6rem;line-height:1;cursor:pointer;color:var(--muted);padding:4px 8px;border-radius:var(--radius-s)}
+.dlg-body{padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.dlg-foot{padding:14px 20px;border-top:1px solid var(--rule);display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.err{color:var(--busy);font-size:.85rem;margin-top:4px;min-height:1em}
+.check{display:flex;gap:8px;align-items:center;font-weight:500}
+.check input{width:auto}
+.receipt{grid-column:1/-1;border:1px dashed var(--rule);border-radius:var(--radius-s);padding:14px}
+.receipt dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0}
+.receipt dt{color:var(--muted)}
+.receipt dd{margin:0;text-align:right;font-weight:600}
+.receipt .total{font-family:var(--display);font-size:2.2rem;text-align:right;margin-top:10px;border-top:1px solid var(--rule);padding-top:8px}
+@media (max-width:480px){.dlg-body{grid-template-columns:1fr}}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(calc(100% + 40px));visibility:hidden;background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:var(--radius-s);font-weight:600;transition:transform .3s,visibility .3s;z-index:50;max-width:calc(100vw - 32px)}
+.toast.show{transform:translateX(-50%) translateY(0);visibility:visible}
+
+footer{padding:36px 0;border-top:1px solid var(--rule);color:var(--muted);font-size:.92rem}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#inicio"><span class="psign" aria-hidden="true">P</span>Inteligentemente Estacionado</a>
+    <nav class="nav" aria-label="Secciones">
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#caracteristicas">Características</a>
+      <a href="#gestion">Gestión</a>
+      <a href="#tarifas">Tarifas</a>
+    </nav>
+    <button class="theme-btn" id="themeBtn" aria-label="Cambiar tema claro u oscuro">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="inicio">
+  <!-- HERO + MAPA -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <h1>Sabe dónde estacionar antes de entrar.</h1>
+        <p class="lead">El sistema muestra cada estacionamiento libre u ocupado en tiempo real, asigna un lugar según el tipo de vehículo y cobra por minuto exacto al salir.</p>
+        <div class="counts" aria-live="polite">
+          <div class="count free"><b id="cFree">0</b><span>Libres</span></div>
+          <div class="count busy"><b id="cBusy">0</b><span>Ocupados</span></div>
+          <div class="count"><b id="cOcc">0%</b><span>Ocupación</span></div>
+        </div>
+        <div class="hero-actions">
+          <button class="btn btn-primary" data-action="new">Registrar ingreso</button>
+          <button class="btn btn-ghost" id="simIn">Simular llegada</button>
+          <button class="btn btn-ghost" id="simOut">Simular salida</button>
+        </div>
+      </div>
+
+      <div class="lot" aria-label="Mapa del estacionamiento">
+        <div class="lot-head">
+          <h3>Nivel 1 · 16 lugares</h3>
+          <div class="legend">
+            <span><i style="background:var(--free)"></i>Libre</span>
+            <span><i style="background:var(--busy)"></i>Ocupado</span>
+            <span><i style="background:rgba(31,79,163,.6)"></i>Accesible</span>
+            <span><i style="background:rgba(47,143,85,.5)"></i>Eléctrico</span>
+            <span><i style="background:rgba(242,194,48,.45)"></i>Moto</span>
+          </div>
+        </div>
+        <div class="row top-row" id="rowA"></div>
+        <div class="lane" aria-hidden="true"><span>⟵ SALIDA</span><span>ENTRADA ⟶</span></div>
+        <div class="row bot-row" id="rowB"></div>
+        <div class="entry">
+          <span class="barrier" id="barrier"><i></i>Barrera de acceso</span>
+          <span>Toca un lugar para ver detalles o registrar un ingreso</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CÓMO FUNCIONA -->
+  <section class="block" id="como-funciona">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Cómo funciona</h2>
+        <p class="lead">Desde que el vehículo llega a la barrera hasta que paga y sale, cada paso queda registrado. Así se ve el recorrido de un conductor.</p>
+      </div>
+      <ol class="steps">
+        <li><h3>Llegada</h3><p>El conductor llega a la entrada y la pantalla le muestra cuántos lugares quedan libres.</p></li>
+        <li><h3>Registro</h3><p>Se ingresa la patente, el tipo de vehículo y la hora exacta de entrada.</p></li>
+        <li><h3>Asignación</h3><p>El sistema elige el mejor lugar libre: motos a zona moto, eléctricos a carga, credencial a accesible.</p></li>
+        <li><h3>Estadía</h3><p>El lugar se marca ocupado y el tiempo se cuenta minuto a minuto, visible desde el panel.</p></li>
+        <li><h3>Pago y salida</h3><p>Al salir se calcula el monto con la tarifa vigente, se registra el pago y el lugar queda libre.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- CARACTERÍSTICAS -->
+  <section class="block" id="caracteristicas">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Características</h2>
+        <p class="lead">Lo que el estacionamiento hace por el conductor y por quien lo administra.</p>
+      </div>
+      <div class="features">
+        <div class="feat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          <h3>Disponibilidad en tiempo real</h3>
+          <p>Cada lugar cambia de color al instante cuando entra o sale un vehículo.</p>
+        </div>
+        <div class="feat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4.5 2 7.5L12 17l-6.5 4 2-7.5L2 9h7z"/></svg>
+          <h3>Asignación automática</h3>
+          <p>Elige el lugar según el vehículo, sin que el conductor tenga que buscar.</p>
+        </div>
+        <div class="feat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <h3>Cobro por minuto</h3>
+          <p>Se paga solo el tiempo usado, con tarifa mínima y tope diario configurables.</p>
+        </div>
+        <div class="feat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="4.5" r="2"/><path d="M9 21a5 5 0 1 0 0-10M12 8v6h5l2 5"/></svg>
+          <h3>Lugares preferentes</h3>
+          <p>Zonas accesibles, de carga eléctrica y para motos, reservadas a quien las necesita.</p>
+        </div>
+        <div class="feat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 20V9"/></svg>
+          <h3>Historial completo</h3>
+          <p>Cada ingreso y salida queda guardado con patente, horario, lugar y monto.</p>
+        </div>
+        <div class="feat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20V10M9 20V4M15 20v-7M21 20V8"/></svg>
+          <h3>Recaudación del día</h3>
+          <p>El administrador ve en todo momento cuánto se ha cobrado y la ocupación promedio.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GESTIÓN CRUD -->
+  <section class="block" id="gestion">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Gestión de vehículos</h2>
+        <p class="lead">Registra ingresos, corrige datos, marca salidas con cobro y elimina registros. Los cambios se guardan en este navegador.</p>
+      </div>
+      <div class="panel">
+        <div class="toolbar">
+          <div class="grow">
+            <label class="sr" for="q">Buscar</label>
+            <input id="q" type="search" placeholder="Buscar por patente, conductor o lugar">
+          </div>
+          <div class="tabs" role="group" aria-label="Filtrar por estado">
+            <button aria-pressed="true" data-filter="todos">Todos</button>
+            <button aria-pressed="false" data-filter="activo">Estacionados</button>
+            <button aria-pressed="false" data-filter="finalizado">Finalizados</button>
+          </div>
+          <button class="btn btn-primary" data-action="new">Registrar ingreso</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Patente</th><th>Vehículo</th><th>Conductor</th><th>Lugar</th><th>Entrada</th><th>Tiempo</th><th>Monto</th><th>Estado</th><th><span class="sr">Acciones</span></th></tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+          <div class="empty" id="empty" hidden></div>
+        </div>
+        <div class="panel-foot">
+          <div><b id="sToday" class="num">$0</b><span>Recaudado hoy</span></div>
+          <div><b id="sExits" class="num">0</b><span>Salidas hoy</span></div>
+          <div><b id="sAvg" class="num">0 min</b><span>Estadía promedio</span></div>
+          <div><b id="sTotal" class="num">0</b><span>Registros totales</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TARIFAS -->
+  <section class="block" id="tarifas">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Tarifas</h2>
+        <p class="lead">Ajusta cómo se cobra. Los cambios se aplican a los vehículos que salgan desde ahora.</p>
+      </div>
+      <div class="rates">
+        <form class="rate-form" id="rateForm">
+          <div class="field"><label for="rMin">Valor por minuto (CLP)</label><input id="rMin" type="number" min="1" step="1" required></div>
+          <div class="field"><label for="rFloor">Cobro mínimo (CLP)</label><input id="rFloor" type="number" min="0" step="10" required></div>
+          <div class="field"><label for="rCap">Tope por día (CLP)</label><input id="rCap" type="number" min="0" step="100" required><small>0 para no aplicar tope</small></div>
+          <div class="field"><label for="rMoto">Descuento motos (%)</label><input id="rMoto" type="number" min="0" max="100" step="1" required></div>
+          <div class="field full"><label for="rGrace">Minutos de cortesía</label><input id="rGrace" type="number" min="0" max="60" step="1" required><small>Si sale dentro de este tiempo no paga</small></div>
+          <div class="btns">
+            <button class="btn btn-primary" type="submit">Guardar tarifas</button>
+            <button class="btn btn-ghost" type="button" id="resetData">Restablecer datos de ejemplo</button>
+          </div>
+        </form>
+        <div class="calc">
+          <h3>Calcula cuánto pagarías</h3>
+          <div class="grid2">
+            <div class="field"><label for="cMins">Minutos estacionado</label><input id="cMins" type="number" min="0" value="95"></div>
+            <div class="field"><label for="cType">Vehículo</label>
+              <select id="cType"><option value="auto">Auto</option><option value="camioneta">Camioneta</option><option value="electrico">Eléctrico</option><option value="moto">Moto</option></select>
+            </div>
+          </div>
+          <div class="result"><span>Total a pagar</span><b id="cOut" class="num">$0</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Inteligentemente Estacionado · Proyecto de estacionamiento inteligente</span>
+    <span>Datos de demostración guardados localmente</span>
+  </div>
+</footer>
+
+<!-- Diálogo: crear / editar -->
+<dialog id="dlgForm" aria-labelledby="fTitle">
+  <form method="dialog" id="vehForm" novalidate>
+    <div class="dlg-head"><h3 id="fTitle">Registrar ingreso</h3><button class="x" type="button" data-close aria-label="Cerrar">×</button></div>
+    <div class="dlg-body">
+      <div class="field"><label for="fPlate">Patente</label><input id="fPlate" autocomplete="off" placeholder="ABCD12" maxlength="8" required><div class="err" id="ePlate"></div></div>
+      <div class="field"><label for="fType">Tipo de vehículo</label>
+        <select id="fType"><option value="auto">Auto</option><option value="camioneta">Camioneta</option><option value="electrico">Eléctrico</option><option value="moto">Moto</option></select>
+      </div>
+      <div class="field full"><label for="fDriver">Conductor</label><input id="fDriver" autocomplete="off" placeholder="Nombre y apellido"><div class="err" id="eDriver"></div></div>
+      <div class="field full"><label class="check"><input type="checkbox" id="fAcc"> Tiene credencial de discapacidad</label></div>
+      <div class="field full"><label for="fSpot">Lugar</label><select id="fSpot"></select><div class="err" id="eSpot"></div></div>
+      <div class="field full" id="fEntryWrap" hidden><label for="fEntry">Hora de entrada</label><input id="fEntry" type="datetime-local"></div>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn btn-ghost" type="button" data-close>Cancelar</button>
+      <button class="btn btn-primary" type="submit" id="fSubmit">Registrar ingreso</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Diálogo: salida -->
+<dialog id="dlgExit" aria-labelledby="xTitle">
+  <form method="dialog" id="exitForm">
+    <div class="dlg-head"><h3 id="xTitle">Registrar salida</h3><button class="x" type="button" data-close aria-label="Cerrar">×</button></div>
+    <div class="dlg-body">
+      <div class="receipt" id="receipt"></div>
+      <div class="field full"><label for="xPay">Medio de pago</label>
+        <select id="xPay"><option>Tarjeta de débito</option><option>Tarjeta de crédito</option><option>Efectivo</option><option>Transferencia</option></select>
+      </div>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn btn-ghost" type="button" data-close>Cancelar</button>
+      <button class="btn btn-primary" type="submit">Registrar salida</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Diálogo: eliminar -->
+<dialog id="dlgDel" aria-labelledby="dTitle">
+  <form method="dialog" id="delForm">
+    <div class="dlg-head"><h3 id="dTitle">Eliminar registro</h3><button class="x" type="button" data-close aria-label="Cerrar">×</button></div>
+    <div class="dlg-body"><p class="field full" id="delText"></p></div>
+    <div class="dlg-foot">
+      <button class="btn btn-ghost" type="button" data-close>Cancelar</button>
+      <button class="btn btn-danger" type="submit">Eliminar registro</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- Configuración ---------- */
+  const SPOTS = [
+    {id:"A1",kind:"accesible"},{id:"A2",kind:"accesible"},{id:"A3",kind:"normal"},{id:"A4",kind:"normal"},
+    {id:"A5",kind:"normal"},{id:"A6",kind:"normal"},{id:"A7",kind:"electrico"},{id:"A8",kind:"electrico"},
+    {id:"B1",kind:"normal"},{id:"B2",kind:"normal"},{id:"B3",kind:"normal"},{id:"B4",kind:"normal"},
+    {id:"B5",kind:"normal"},{id:"B6",kind:"normal"},{id:"B7",kind:"moto"},{id:"B8",kind:"moto"}
+  ];
+  const KIND_LABEL = {normal:"Estándar",accesible:"Accesible",electrico:"Eléctrico",moto:"Moto"};
+  const TYPE_LABEL = {auto:"Auto",camioneta:"Camioneta",electrico:"Eléctrico",moto:"Moto"};
+  const CAR_COLORS = ["#B8BEC4","#4A6FA5","#8C2F2F","#E5E2DA","#3E4A3D","#2B2B2B","#C9A227","#6D7B8A"];
+  const DEFAULT_RATES = {perMin:28, floor:500, cap:18000, moto:50, grace:5};
+  const ICONS = {
+    accesible:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="4.5" r="2"/><path d="M9 21a5 5 0 1 0 0-10M12 8v6h5l2 5"/></svg>',
+    electrico:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>',
+    moto:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="5" cy="17" r="3"/><circle cx="19" cy="17" r="3"/><path d="M5 17l4-7h5l5 7M14 10l-2-4h-3"/></svg>',
+    normal:''
+  };
+  const KEY = "ie-estacionamiento-v1";
+
+  /* ---------- Estado y almacenamiento ---------- */
+  let state = load() || seed();
+  let filter = "todos";
+  let editingId = null, exitId = null, delId = null, presetSpot = null;
+
+  function load(){
+    try{ const raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+  }
+  function save(){
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  }
+  function seed(){
+    const now = Date.now(), m = 60000;
+    const recs = [
+      {plate:"KXRT45",type:"auto",driver:"Camila Soto",spot:"A3",ago:142},
+      {plate:"HJ8821",type:"camioneta",driver:"Rodrigo Pérez",spot:"A5",ago:57},
+      {plate:"PLVW19",type:"electrico",driver:"Valentina Rojas",spot:"A7",ago:23},
+      {plate:"GFZK66",type:"auto",driver:"Matías Fuentes",spot:"B2",ago:210},
+      {plate:"BCDF30",type:"auto",driver:"Javiera Muñoz",spot:"A1",ago:12,acc:true},
+      {plate:"ZK512",type:"moto",driver:"Diego Araya",spot:"B7",ago:76},
+      {plate:"RTYU88",type:"auto",driver:"Fernanda Lagos",spot:"B5",ago:34}
+    ].map((r,i)=>({id:uid(),plate:r.plate,type:r.type,driver:r.driver,acc:!!r.acc,spot:r.spot,
+      entry:now - r.ago*m, exit:null, amount:null, pay:null, status:"activo", color:CAR_COLORS[i%CAR_COLORS.length]}));
+    // Algunas salidas finalizadas hoy
+    const done = [
+      {plate:"LMNP22",type:"auto",driver:"Ignacio Vera",spot:"A4",start:300,dur:48},
+      {plate:"WQTS71",type:"camioneta",driver:"Constanza Díaz",spot:"B3",start:260,dur:131},
+      {plate:"DFGH04",type:"moto",driver:"Benjamín Toro",spot:"B8",start:180,dur:22}
+    ].map((r,i)=>{
+      const entry = now - r.start*m, exit = entry + r.dur*m;
+      const rec = {id:uid(),plate:r.plate,type:r.type,driver:r.driver,acc:false,spot:r.spot,entry,exit,pay:"Tarjeta de débito",status:"finalizado",color:CAR_COLORS[(i+3)%CAR_COLORS.length]};
+      rec.amount = fee(r.dur, r.type, DEFAULT_RATES);
+      return rec;
+    });
+    return {rates:{...DEFAULT_RATES}, records:[...recs,...done]};
+  }
+  function uid(){ return Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4); }
+
+  /* ---------- Utilidades ---------- */
+  const $ = s => document.querySelector(s);
+  const clp = new Intl.NumberFormat("es-CL",{style:"currency",currency:"CLP",maximumFractionDigits:0});
+  const timeFmt = new Intl.DateTimeFormat("es-CL",{hour:"2-digit",minute:"2-digit"});
+  const dateFmt = new Intl.DateTimeFormat("es-CL",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+  function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+  function minutesBetween(a,b){ return Math.max(0, Math.ceil((b-a)/60000)); }
+  function dur(mins){ const h=Math.floor(mins/60), m=mins%60; return h ? `${h} h ${m} min` : `${m} min`; }
+  function isToday(ts){ const d=new Date(ts), n=new Date(); return d.toDateString()===n.toDateString(); }
+  function normPlate(s){ return s.toUpperCase().replace(/[^A-Z0-9]/g,""); }
+  function fmtPlate(p){ return p.length===6 ? p.slice(0,2)+"·"+p.slice(2,4)+"·"+p.slice(4) : p; }
+
+  function fee(mins, type, r){
+    if(mins <= r.grace) return 0;
+    let total = Math.max(r.floor, mins * r.perMin);
+    if(r.cap > 0){
+      const days = Math.floor(mins/1440), rest = mins % 1440;
+      const restFee = rest === 0 ? 0 : Math.min(r.cap, Math.max(r.floor, rest*r.perMin));
+      total = Math.min(total, days*r.cap + restFee);
+    }
+    if(type === "moto") total = total * (1 - r.moto/100);
+    return Math.round(total/10)*10;
+  }
+
+  const active = () => state.records.filter(r=>r.status==="activo");
+  const spotOccupant = id => active().find(r=>r.spot===id);
+
+  function bestSpot(type, acc){
+    const free = SPOTS.filter(s=>!spotOccupant(s.id));
+    const pick = k => free.find(s=>s.kind===k);
+    if(acc) return pick("accesible") || pick("normal") || null;
+    if(type==="moto") return pick("moto") || pick("normal") || null;
+    if(type==="electrico") return pick("electrico") || pick("normal") || null;
+    return pick("normal") || null;
+  }
+  function spotAllowed(spot, type, acc){
+    if(spot.kind==="accesible") return acc;
+    if(spot.kind==="moto") return type==="moto";
+    if(spot.kind==="electrico") return type==="electrico";
+    return true;
+  }
+
+  /* ---------- Render ---------- */
+  function renderMap(justId){
+    const rowA = $("#rowA"), rowB = $("#rowB");
+    rowA.innerHTML = ""; rowB.innerHTML = "";
+    SPOTS.forEach(s=>{
+      const occ = spotOccupant(s.id);
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = `spot ${s.kind}${occ?" busy":""}${justId===s.id?" just":""}`;
+      b.dataset.spot = s.id;
+      b.setAttribute("aria-label", `Lugar ${s.id}, ${KIND_LABEL[s.kind]}, ${occ ? "ocupado por "+fmtPlate(occ.plate) : "libre"}`);
+      b.innerHTML = `<span class="code">${s.id}</span><span class="kind">${ICONS[s.kind]}</span>`
+        + (occ ? `<span class="car${occ.type==="moto"?" moto-shape":""}" style="--car:${occ.color}"></span><span class="plate">${esc(fmtPlate(occ.plate))}</span>` : "")
+        + `<span class="dot"></span>`;
+      (s.id[0]==="A" ? rowA : rowB).appendChild(b);
+    });
+    const busy = active().length, free = SPOTS.length - busy;
+    $("#cFree").textContent = free;
+    $("#cBusy").textContent = busy;
+    $("#cOcc").textContent = Math.round(busy/SPOTS.length*100) + "%";
+  }
+
+  function renderTable(){
+    const q = normPlate($("#q").value) , qText = $("#q").value.trim().toLowerCase();
+    const now = Date.now();
+    let rows = state.records.slice().sort((a,b)=> (a.status===b.status ? b.entry-a.entry : a.status==="activo"?-1:1));
+    if(filter!=="todos") rows = rows.filter(r=>r.status===filter);
+    if(qText) rows = rows.filter(r => (q && r.plate.includes(q)) || r.driver.toLowerCase().includes(qText) || r.spot.toLowerCase()===qText);
+    const tb = $("#tbody"); tb.innerHTML = "";
+    const empty = $("#empty");
+    if(!rows.length){
+      empty.hidden = false;
+      empty.innerHTML = qText
+        ? `No hay vehículos que coincidan con “${esc($("#q").value)}”. Revisa la patente o borra la búsqueda.`
+        : (filter==="activo" ? `No hay vehículos estacionados.<br><button class="btn btn-primary" data-action="new">Registrar ingreso</button>` : `Aún no hay registros.<br><button class="btn btn-primary" data-action="new">Registrar ingreso</button>`);
+    } else empty.hidden = true;
+
+    rows.forEach(r=>{
+      const mins = minutesBetween(r.entry, r.exit || now);
+      const amount = r.status==="activo" ? fee(mins, r.type, state.rates) : r.amount;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><span class="plate-chip">${esc(fmtPlate(r.plate))}</span></td>
+        <td>${TYPE_LABEL[r.type]}</td>
+        <td>${esc(r.driver||"—")}</td>
+        <td>${r.spot}</td>
+        <td class="num">${isToday(r.entry)?timeFmt.format(r.entry):dateFmt.format(r.entry)}</td>
+        <td class="num">${dur(mins)}</td>
+        <td class="num">${clp.format(amount)}${r.status==="activo"?' <small style="color:var(--muted)">en curso</small>':''}</td>
+        <td>${r.status==="activo" ? '<span class="badge">Estacionado</span>' : '<span class="badge done">Finalizado</span>'}</td>
+        <td><div class="actions">
+          ${r.status==="activo" ? `<button class="btn-link" data-exit="${r.id}">Salida</button>` : ""}
+          <button class="btn-link" data-edit="${r.id}">Editar</button>
+          <button class="btn-link danger" data-del="${r.id}">Eliminar</button>
+        </div></td>`;
+      tb.appendChild(tr);
+    });
+
+    const todayDone = state.records.filter(r=>r.status==="finalizado" && isToday(r.exit));
+    const sum = todayDone.reduce((a,r)=>a+(r.amount||0),0);
+    const avg = todayDone.length ? Math.round(todayDone.reduce((a,r)=>a+minutesBetween(r.entry,r.exit),0)/todayDone.length) : 0;
+    $("#sToday").textContent = clp.format(sum);
+    $("#sExits").textContent = todayDone.length;
+    $("#sAvg").textContent = dur(avg);
+    $("#sTotal").textContent = state.records.length;
+  }
+
+  function renderAll(justId){ renderMap(justId); renderTable(); }
+
+  /* ---------- Formulario crear/editar ---------- */
+  const dlgForm = $("#dlgForm");
+  function fillSpotOptions(currentSpot){
+    const type = $("#fType").value, acc = $("#fAcc").checked;
+    const sel = $("#fSpot"); const prev = sel.value;
+    sel.innerHTML = `<option value="auto">Asignar automáticamente</option>`;
+    SPOTS.forEach(s=>{
+      const occ = spotOccupant(s.id);
+      const mine = currentSpot===s.id;
+      if(occ && !mine) return;
+      if(!spotAllowed(s,type,acc)) return;
+      const o = document.createElement("option");
+      o.value = s.id; o.textContent = `${s.id} · ${KIND_LABEL[s.kind]}${mine?" (actual)":""}`;
+      sel.appendChild(o);
+    });
+    const want = presetSpot || prev || currentSpot;
+    if(want && [...sel.options].some(o=>o.value===want)) sel.value = want;
+  }
+  function openForm(rec, spotId){
+    editingId = rec ? rec.id : null;
+    presetSpot = spotId || null;
+    $("#fTitle").textContent = rec ? "Editar registro" : "Registrar ingreso";
+    $("#fSubmit").textContent = rec ? "Guardar cambios" : "Registrar ingreso";
+    $("#fPlate").value = rec ? rec.plate : "";
+    $("#fDriver").value = rec ? rec.driver : "";
+    $("#fType").value = rec ? rec.type : (spotId ? ({moto:"moto",electrico:"electrico"}[SPOTS.find(s=>s.id===spotId).kind]||"auto") : "auto");
+    $("#fAcc").checked = rec ? rec.acc : (spotId ? SPOTS.find(s=>s.id===spotId).kind==="accesible" : false);
+    $("#fEntryWrap").hidden = !rec;
+    if(rec){ const d = new Date(rec.entry - new Date().getTimezoneOffset()*60000); $("#fEntry").value = d.toISOString().slice(0,16); }
+    ["ePlate","eDriver","eSpot"].forEach(id=>$("#"+id).textContent="");
+    $("#fSpot").value = "";
+    fillSpotOptions(rec && rec.status==="activo" ? rec.spot : null);
+    if(rec && rec.status!=="activo"){ // registro finalizado: el lugar es histórico
+      const sel=$("#fSpot"); sel.innerHTML = `<option value="${rec.spot}">${rec.spot} (registro finalizado)</option>`; sel.disabled = true;
+    } else $("#fSpot").disabled = false;
+    dlgForm.showModal();
+    $("#fPlate").focus();
+  }
+  $("#fType").addEventListener("change",()=>{ presetSpot=null; fillSpotOptions(editingId ? (state.records.find(r=>r.id===editingId)||{}).spot : null); });
+  $("#fAcc").addEventListener("change",()=>{ presetSpot=null; fillSpotOptions(editingId ? (state.records.find(r=>r.id===editingId)||{}).spot : null); });
+
+  $("#vehForm").addEventListener("submit", e=>{
+    e.preventDefault();
+    const plate = normPlate($("#fPlate").value);
+    const driver = $("#fDriver").value.trim();
+    const type = $("#fType").value, acc = $("#fAcc").checked;
+    let ok = true;
+    $("#ePlate").textContent = $("#eDriver").textContent = $("#eSpot").textContent = "";
+    if(plate.length < 5 || plate.length > 6){ $("#ePlate").textContent = "Escribe la patente con 5 o 6 letras y números, por ejemplo ABCD12."; ok=false; }
+    else if(active().some(r=>r.plate===plate && r.id!==editingId)){ $("#ePlate").textContent = "Esta patente ya está estacionada. Registra su salida antes de un nuevo ingreso."; ok=false; }
+    if(!driver){ $("#eDriver").textContent = "Escribe el nombre del conductor."; ok=false; }
+    let spotId = $("#fSpot").value;
+    const rec = editingId ? state.records.find(r=>r.id===editingId) : null;
+    if(!rec || rec.status==="activo"){
+      if(spotId==="auto"){
+        if(rec && spotAllowed(SPOTS.find(s=>s.id===rec.spot),type,acc)) spotId = rec.spot;
+        else { const b = bestSpot(type,acc); spotId = b ? b.id : null; }
+      }
+      if(!spotId){ $("#eSpot").textContent = "No quedan lugares libres para este tipo de vehículo."; ok=false; }
+    }
+    if(!ok) return;
+
+    if(rec){
+      rec.plate = plate; rec.driver = driver; rec.type = type; rec.acc = acc;
+      if(rec.status==="activo") rec.spot = spotId;
+      const v = $("#fEntry").value;
+      if(v){ const t = new Date(v).getTime(); if(!isNaN(t) && t <= (rec.exit||Date.now())) rec.entry = t; }
+      if(rec.status==="finalizado") rec.amount = fee(minutesBetween(rec.entry,rec.exit), rec.type, state.rates);
+      save(); dlgForm.close(); renderAll(rec.spot); toast(`Cambios guardados para ${fmtPlate(plate)}`);
+    } else {
+      const n = {id:uid(),plate,type,driver,acc,spot:spotId,entry:Date.now(),exit:null,amount:null,pay:null,status:"activo",color:CAR_COLORS[Math.floor(Math.random()*CAR_COLORS.length)]};
+      state.records.push(n); save(); dlgForm.close(); openBarrier(); renderAll(spotId);
+      toast(`Ingreso registrado: ${fmtPlate(plate)} en el lugar ${spotId}`);
+    }
+  });
+
+  /* ---------- Salida ---------- */
+  const dlgExit = $("#dlgExit");
+  function openExit(rec){
+    exitId = rec.id;
+    const now = Date.now(), mins = minutesBetween(rec.entry, now), amount = fee(mins, rec.type, state.rates);
+    $("#receipt").innerHTML = `<dl>
+      <dt>Patente</dt><dd>${esc(fmtPlate(rec.plate))}</dd>
+      <dt>Lugar</dt><dd>${rec.spot}</dd>
+      <dt>Entrada</dt><dd>${dateFmt.format(rec.entry)}</dd>
+      <dt>Salida</dt><dd>${dateFmt.format(now)}</dd>
+      <dt>Tiempo</dt><dd>${dur(mins)}</dd>
+      <dt>Tarifa</dt><dd>${clp.format(state.rates.perMin)} / min${rec.type==="moto"&&state.rates.moto?` · −${state.rates.moto}% moto`:""}</dd>
+    </dl><div class="total num">${clp.format(amount)}</div>${amount===0?'<small style="color:var(--muted)">Dentro de los minutos de cortesía</small>':''}`;
+    dlgExit.showModal();
+  }
+  $("#exitForm").addEventListener("submit", e=>{
+    e.preventDefault();
+    const rec = state.records.find(r=>r.id===exitId); if(!rec) return dlgExit.close();
+    finishExit(rec, $("#xPay").value);
+    dlgExit.close();
+  });
+  function finishExit(rec, pay){
+    rec.exit = Date.now();
+    rec.amount = fee(minutesBetween(rec.entry,rec.exit), rec.type, state.rates);
+    rec.pay = pay; rec.status = "finalizado";
+    save(); openBarrier(); renderAll();
+    toast(`Salida registrada: ${fmtPlate(rec.plate)} pagó ${clp.format(rec.amount)}`);
+  }
+
+  /* ---------- Eliminar ---------- */
+  const dlgDel = $("#dlgDel");
+  function openDel(rec){
+    delId = rec.id;
+    $("#delText").textContent = `Se eliminará el registro de ${fmtPlate(rec.plate)} (${rec.driver}). ${rec.status==="activo"?"El lugar "+rec.spot+" quedará libre sin cobrar. ":""}Esta acción no se puede deshacer.`;
+    dlgDel.showModal();
+  }
+  $("#delForm").addEventListener("submit", e=>{
+    e.preventDefault();
+    const i = state.records.findIndex(r=>r.id===delId);
+    if(i>-1){ const p = state.records[i].plate; state.records.splice(i,1); save(); renderAll(); toast(`Registro de ${fmtPlate(p)} eliminado`); }
+    dlgDel.close();
+  });
+
+  /* ---------- Eventos generales ---------- */
+  document.addEventListener("click", e=>{
+    const t = e.target.closest("button,[data-action]"); if(!t) return;
+    if(t.dataset.action==="new") openForm(null);
+    else if(t.hasAttribute("data-close")) t.closest("dialog").close();
+    else if(t.dataset.edit) openForm(state.records.find(r=>r.id===t.dataset.edit));
+    else if(t.dataset.exit) openExit(state.records.find(r=>r.id===t.dataset.exit));
+    else if(t.dataset.del) openDel(state.records.find(r=>r.id===t.dataset.del));
+    else if(t.dataset.spot){
+      const occ = spotOccupant(t.dataset.spot);
+      if(occ) openExit(occ); else openForm(null, t.dataset.spot);
+    }
+    else if(t.dataset.filter){
+      filter = t.dataset.filter;
+      document.querySelectorAll("[data-filter]").forEach(b=>b.setAttribute("aria-pressed", b===t));
+      renderTable();
+    }
+  });
+  $("#q").addEventListener("input", renderTable);
+
+  /* Simulación */
+  const NAMES = ["Tomás Herrera","Antonia Silva","Joaquín Castro","Isidora Núñez","Vicente Reyes","Catalina Morales","Martín Godoy","Sofía Contreras","Agustín Bravo","Florencia Pino"];
+  const LET = "BCDFGHJKLPRSTVWXYZ";
+  function randPlate(type){
+    const L = () => LET[Math.floor(Math.random()*LET.length)];
+    const D = () => Math.floor(Math.random()*10);
+    return type==="moto" ? `${L()}${L()}${L()}${D()}${D()}` : `${L()}${L()}${L()}${L()}${D()}${D()}`;
+  }
+  $("#simIn").addEventListener("click", ()=>{
+    const r = Math.random();
+    const type = r<.15?"moto":r<.3?"electrico":r<.45?"camioneta":"auto";
+    const acc = Math.random()<.1;
+    const spot = bestSpot(type,acc);
+    if(!spot){ toast("Estacionamiento lleno: no quedan lugares para este vehículo"); return; }
+    const plate = randPlate(type);
+    state.records.push({id:uid(),plate,type,driver:NAMES[Math.floor(Math.random()*NAMES.length)],acc,spot:spot.id,
+      entry:Date.now()-Math.floor(Math.random()*90)*60000,exit:null,amount:null,pay:null,status:"activo",
+      color:CAR_COLORS[Math.floor(Math.random()*CAR_COLORS.length)]});
+    save(); openBarrier(); renderAll(spot.id);
+    toast(`Llegó ${fmtPlate(plate)} (${TYPE_LABEL[type]}) y se asignó el lugar ${spot.id}`);
+  });
+  $("#simOut").addEventListener("click", ()=>{
+    const a = active();
+    if(!a.length){ toast("No hay vehículos estacionados"); return; }
+    finishExit(a[Math.floor(Math.random()*a.length)], "Tarjeta de débito");
+  });
+
+  function openBarrier(){
+    const b = $("#barrier"); b.classList.add("open");
+    clearTimeout(openBarrier.t); openBarrier.t = setTimeout(()=>b.classList.remove("open"), 1600);
+  }
+
+  /* Tarifas */
+  function fillRates(){
+    const r = state.rates;
+    $("#rMin").value = r.perMin; $("#rFloor").value = r.floor; $("#rCap").value = r.cap; $("#rMoto").value = r.moto; $("#rGrace").value = r.grace;
+    calc();
+  }
+  $("#rateForm").addEventListener("submit", e=>{
+    e.preventDefault();
+    const n = {perMin:+$("#rMin").value, floor:+$("#rFloor").value, cap:+$("#rCap").value, moto:Math.min(100,+$("#rMoto").value), grace:+$("#rGrace").value};
+    if(Object.values(n).some(v=>isNaN(v)||v<0) || n.perMin<1){ toast("Revisa las tarifas: deben ser números positivos y el valor por minuto al menos $1"); return; }
+    state.rates = n; save(); renderTable(); calc(); toast("Tarifas guardadas");
+  });
+  $("#resetData").addEventListener("click", ()=>{
+    state = seed(); save(); fillRates(); renderAll(); toast("Datos de ejemplo restablecidos");
+  });
+  function calc(){
+    const mins = Math.max(0, parseInt($("#cMins").value,10)||0);
+    $("#cOut").textContent = clp.format(fee(mins, $("#cType").value, state.rates));
+  }
+  $("#cMins").addEventListener("input", calc);
+  $("#cType").addEventListener("change", calc);
+
+  /* Toast */
+  function toast(msg){
+    const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toast.t); toast.t = setTimeout(()=>t.classList.remove("show"), 3200);
+  }
+
+  /* Tema */
+  $("#themeBtn").addEventListener("click", ()=>{
+    const root = document.documentElement;
+    const isDark = root.dataset.theme ? root.dataset.theme==="dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = isDark ? "light" : "dark";
+    try{ localStorage.setItem(KEY+"-theme", root.dataset.theme); }catch(e){}
+  });
+  try{ const th = localStorage.getItem(KEY+"-theme"); if(th) document.documentElement.dataset.theme = th; }catch(e){}
+
+  /* Inicio */
+  fillRates();
+  renderAll();
+  setInterval(renderTable, 30000);
+})();
+</script>
+</body>
+</html>
