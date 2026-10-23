@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Informe Técnico de Configuración y Despliegue de un MVP en Microsoft Azure</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+    color: #1e293b;
+    line-height: 1.6;
+    margin: 40px;
+    font-size: 11pt;
+  }
+  h1 {
+    font-size: 20pt;
+    color: #0f172a;
+    border-bottom: 2px solid #0284c7;
+    padding-bottom: 8px;
+    margin-top: 24px;
+    text-transform: uppercase;
+  }
+  h2 {
+    font-size: 15pt;
+    color: #1e3a8a;
+    border-bottom: 1px solid #cbd5e1;
+    padding-bottom: 4px;
+    margin-top: 20px;
+  }
+  h3 {
+    font-size: 12pt;
+    color: #0369a1;
+    margin-top: 14px;
+  }
+  .portada {
+    text-align: center;
+    border: 2px solid #0284c7;
+    padding: 30px;
+    margin-bottom: 40px;
+    background-color: #f8fafc;
+  }
+  .portada h1 {
+    font-size: 22pt;
+    color: #0f172a;
+    border-bottom: none;
+    margin-bottom: 5px;
+  }
+  .portada .subtitulo {
+    font-size: 13pt;
+    color: #0284c7;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  .portada .datos {
+    font-size: 10pt;
+    color: #475569;
+    text-align: left;
+    margin-top: 25px;
+    border-top: 1px dashed #cbd5e1;
+    padding-top: 15px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 10pt;
+  }
+  th {
+    background-color: #0f172a;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 8px 10px;
+    border: 1px solid #0f172a;
+    text-align: left;
+  }
+  td {
+    padding: 7px 10px;
+    border: 1px solid #cbd5e1;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td {
+    background-color: #f8fafc;
+  }
+  .figura-box {
+    border: 2px dashed #0284c7;
+    background-color: #f0f9ff;
+    padding: 20px;
+    text-align: center;
+    margin: 20px 0 8px 0;
+    border-radius: 6px;
+    color: #0369a1;
+    font-weight: bold;
+  }
+  .figura-desc {
+    font-size: 9.5pt;
+    color: #475569;
+    font-style: italic;
+    margin-bottom: 20px;
+    text-align: center;
+    display: block;
+  }
+  pre, code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    background-color: #f1f5f9;
+    color: #0f172a;
+    border-radius: 4px;
+    font-size: 9.5pt;
+  }
+  pre {
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    overflow-x: auto;
+    white-space: pre-wrap;
+  }
+  blockquote {
+    border-left: 4px solid #0284c7;
+    padding-left: 15px;
+    color: #334155;
+    margin: 15px 0;
+    background-color: #f8fafc;
+    padding: 10px 15px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 9pt;
+  }
+  .badge-allow { background-color: #dcfce7; color: #166534; }
+  .badge-deny { background-color: #fee2e2; color: #991b1b; }
+  .badge-tag { background-color: #e0f2fe; color: #0369a1; }
+  ul, ol {
+    margin-top: 6px;
+    margin-bottom: 12px;
+    padding-left: 24px;
+  }
+  li {
+    margin-bottom: 4px;
+  }
+  .page-break {
+    page-break-before: always;
+  }
+</style>
+</head>
+<body>
+
+<div class="portada">
+  <div style="font-size: 11pt; font-weight: bold; letter-spacing: 2px; color: #64748b; margin-bottom: 10px;">
+    INSTITUTO PROFESIONAL SANTO TOMÁS · ÁREA INFORMÁTICA
+  </div>
+  <h1>INFORME TÉCNICO DE CONFIGURACIÓN Y DESPLIEGUE DE UN MVP EN MICROSOFT AZURE</h1>
+  <div class="subtitulo">
+    Sistema de Estacionamiento Inteligente IoT (AURA Smart Parking)<br>
+    Despliegue sobre Windows Server 2022 e Internet Information Services (IIS)
+  </div>
+
+  <div class="datos">
+    <p><strong>Asignaturas Articuladas:</strong> Arquitectura de Sistemas + Programación en la Nube</p>
+    <p><strong>Fecha y Hora de Presentación:</strong> Miércoles 28 de octubre a las 09:00 hrs</p>
+    <p><strong>Lugar de Exposición:</strong> Auditorio 1, Edificio 91, Tercer Piso (Tenida Semi-Formal)</p>
+    <p><strong>Repositorio Oficial GitHub:</strong> https://github.com/PaulFL808/INTELIGEMENTE-ESTACIONADO.git</p>
+    <p><strong>URL Pública del Sitio Desplegado:</strong> http://aurasmartparking.eastus.cloudapp.azure.com</p>
+  </div>
+</div>
+
+<h2>IDENTIFICACIÓN DEL EQUIPO DE TRABAJO</h2>
+<table>
+  <thead>
+    <tr>
+      <th style="width: 25%;">Integrante</th>
+      <th style="width: 30%;">Rol Principal</th>
+      <th style="width: 45%;">Responsabilidad Técnica Asignada</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Integrante 1</strong></td>
+      <td>Interfaz y Experiencia (UI/UX)</td>
+      <td>Diseño de interfaz responsive, tipografías Unbounded y Space Grotesk, terminal de reservas, validación de formularios y accesibilidad.</td>
+    </tr>
+    <tr>
+      <td><strong>Integrante 2</strong></td>
+      <td>Arquitectura y Lógica de Negocio</td>
+      <td>Definición del modelo por capas, controladores de la API REST, motor de reglas de ocupación y operaciones CRUD.</td>
+    </tr>
+    <tr>
+      <td><strong>Integrante 3</strong></td>
+      <td>Datos e Integración IoT (Hardware)</td>
+      <td>Programación en C++ de Arduino UNO R3, sensores ultrasónicos HC-SR04, servomotores SG90, LCD I2C y puente Web Serial API.</td>
+    </tr>
+    <tr>
+      <td><strong>Integrante 4</strong></td>
+      <td>Infraestructura Cloud y Operaciones</td>
+      <td>Aprovisionamiento de la VM en Azure, endurecimiento de seguridad en NSG, instalación y configuración del rol IIS y Azure DNS.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h2>1. DESCRIPCIÓN DE LA ACTIVIDAD</h2>
+<p>
+El presente informe documenta el proceso técnico de configuración, endurecimiento de seguridad y despliegue en producción del Producto Mínimo Viable (MVP) <strong>AURA Smart Parking</strong> en la nube pública de <strong>Microsoft Azure</strong>, ejecutándose sobre el sistema operativo <strong>Windows Server 2022 Datacenter</strong> administrado mediante el servidor web <strong>Internet Information Services (IIS)</strong>.
+</p>
+<p>
+El proyecto aborda la problemática de congestión y búsqueda ineficiente de aparcamiento en zonas urbanas densas, articulando una solución integral que vincula una <strong>maqueta física a escala (70 × 72 cm)</strong> controlada por un microcontrolador <strong>Arduino UNO R3</strong> con una plataforma web en la nube que gestiona reservas, detección automática vehicular mediante ultrasonido, control de barreras de acceso y tarificación en pesos chilenos ($ CLP).
+</p>
+
+<h2>2. MÁQUINA VIRTUAL EN MICROSOFT AZURE</h2>
+<p>
+Para garantizar el aislamiento de procesos y el control exhaustivo sobre el servidor web, los puertos de red y el runtime de ejecución, se aprovisionó una máquina virtual bajo el modelo IaaS (Infraestructura como Servicio) en Microsoft Azure.
+</p>
+
+<h3>2.1 Parámetros y Características del Recurso Cloud</h3>
+<ul>
+  <li><strong>Nombre del Recurso:</strong> <code>vm-aurasmartparking-prod</code></li>
+  <li><strong>Grupo de Recursos (Resource Group):</strong> <code>rg-smartparking-ipst</code></li>
+  <li><strong>Región Cloud:</strong> <code>East US 2</code> (Estados Unidos Oriental 2)</li>
+  <li><strong>Sistema Operativo:</strong> Windows Server 2022 Datacenter: Azure Edition - Gen2 (x64)</li>
+  <li><strong>Tamaño de Instancia (SKU):</strong> <code>Standard_B2s</code> (2 vCPUs virtuales, 4 GiB de memoria RAM, hasta 3200 IOPS de rendimiento en disco)</li>
+  <li><strong>Almacenamiento del SO:</strong> Disco SSD Premium de 128 GiB administrado por Azure con cifrado en reposo (PMK)</li>
+  <li><strong>Zona de Disponibilidad:</strong> Zona 1 con acuerdo de nivel de servicio (SLA) del 99.99%</li>
+  <li><strong>Tipo de Seguridad:</strong> Estándar con arranque seguro y compatibilidad con vTPM</li>
+</ul>
+
+<div class="figura-box">
+  [PEGAR AQUÍ CAPTURA 1: Información general de la Máquina Virtual en el Portal de Azure, mostrando el estado 'En ejecución', tamaño Standard_B2s y sistema operativo]
+</div>
+<span class="figura-desc">Figura 1: Hoja general de la máquina virtual 'vm-aurasmartparking-prod' en Azure Portal evidenciando estado operativo y asignación de recursos.</span>
+
+<h2>3. RED, SEGURIDAD Y CONFIGURACIÓN DE NSG</h2>
+<p>
+La conectividad se estructuró a través de una Red Virtual (VNet) dedicada, mientras que la exposición a Internet se resguarda mediante un Grupo de Seguridad de Red (Network Security Group - NSG) que aplica el principio de menor privilegio.
+</p>
+
+<h3>3.1 Parámetros de Red</h3>
+<ul>
+  <li><strong>Red Virtual (VNet):</strong> <code>vnet-smartparking</code> (Segmento <code>10.0.0.0/16</code>)</li>
+  <li><strong>Subred de Trabajo:</strong> <code>snet-web</code> (Segmento <code>10.0.0.0/24</code>)</li>
+  <li><strong>Dirección IP Privada:</strong> <code>10.0.0.4</code> (Asignación dinámica persistente)</li>
+  <li><strong>Dirección IP Pública (IPv4):</strong> <code>20.124.68.142</code> (SKU Estándar de Azure)</li>
+  <li><strong>Grupo de Seguridad de Red:</strong> <code>nsg-smartparking-prod</code></li>
+</ul>
+
+<h3>3.2 Matriz de Reglas de Entrada (Inbound Security Rules)</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Prioridad</th>
+      <th>Nombre de Regla</th>
+      <th>Puerto</th>
+      <th>Protocolo</th>
+      <th>Origen</th>
+      <th>Acción</th>
+      <th>Función Técnica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>300</strong></td>
+      <td>Allow-HTTP-80</td>
+      <td>80</td>
+      <td>TCP</td>
+      <td>Any (Internet)</td>
+      <td><span class="badge badge-allow">ALLOW</span></td>
+      <td>Permite el tráfico web público de usuarios hacia el sitio publicado en IIS.</td>
+    </tr>
+    <tr>
+      <td><strong>310</strong></td>
+      <td>Allow-HTTPS-443</td>
+      <td>443</td>
+      <td>TCP</td>
+      <td>Any (Internet)</td>
+      <td><span class="badge badge-allow">ALLOW</span></td>
+      <td>Tráfico cifrado seguro SSL/TLS para transacciones y pases QR.</td>
+    </tr>
+    <tr>
+      <td><strong>320</strong></td>
+      <td>Allow-API-3001</td>
+      <td>3001</td>
+      <td>TCP</td>
+      <td>Any (Internet)</td>
+      <td><span class="badge badge-allow">ALLOW</span></td>
+      <td>Puerto de escucha para la API REST Node.js e ingesta de telemetría IoT.</td>
+    </tr>
+    <tr>
+      <td><strong>330</strong></td>
+      <td>Allow-RDP-3389</td>
+      <td>3389</td>
+      <td>TCP</td>
+      <td>IP Administrador</td>
+      <td><span class="badge badge-allow">ALLOW</span></td>
+      <td>Acceso remoto administrativo seguro mediante Escritorio Remoto (RDP).</td>
+    </tr>
+    <tr>
+      <td><strong>65000</strong></td>
+      <td>DenyAllInbound</td>
+      <td>Any</td>
+      <td>Any</td>
+      <td>Any</td>
+      <td><span class="badge badge-deny">DENY</span></td>
+      <td>Bloqueo automático de cualquier puerto no autorizado explícitamente.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="figura-box">
+  [PEGAR AQUÍ CAPTURA 2: Grupo de Seguridad de Red (NSG) en Azure Portal con las reglas de entrada 80, 443, 3001 y 3389]
+</div>
+<span class="figura-desc">Figura 2: Tabla de reglas de seguridad de entrada del NSG 'nsg-smartparking-prod' configuradas en Microsoft Azure.</span>
+
+<div class="page-break"></div>
+
+<h2>4. WINDOWS SERVER E INSTALACIÓN DE IIS</h2>
+
+<h3>4.1 Conexión por Escritorio Remoto (RDP)</h3>
+<p>
+El acceso al entorno de administración se realizó mediante el cliente nativo de Escritorio Remoto de Windows:
+</p>
+<pre>mstsc /v:20.124.68.142:3389</pre>
+<p>
+Iniciando sesión con la cuenta de administrador aprovisionada en Azure.
+</p>
+
+<h3>4.2 Instalación del Rol Web Server (IIS) mediante PowerShell</h3>
+<p>
+Para automatizar el despliegue y evitar inconsistencias manuales, el rol de IIS se instaló ejecutando el siguiente comando en la consola de PowerShell con privilegios elevados:
+</p>
+<pre>Install-WindowsFeature -name Web-Server -IncludeManagementTools</pre>
+<p>
+Posteriormente, se verificó el arranque automático del servicio mediante:
+</p>
+<pre>Get-Service -Name W3SVC | Select-Object Name, Status, StartType</pre>
+
+<h3>4.3 Configuración del Sitio Web y Proxy Inverso</h3>
+<ol>
+  <li><strong>Ruta Física:</strong> Se desplegó la aplicación en el directorio <code>C:\inetpub\wwwroot\smart-parking</code>, conteniendo la compilación optimizada del frontend de React y el backend Express.</li>
+  <li><strong>URL Rewrite y Application Request Routing (ARR):</strong> Se instalaron los módulos oficiales de IIS para enrutar las peticiones web de la SPA y redirigir las solicitudes a <code>/api/*</code> hacia el servicio interno de Node.js en el puerto 3001.</li>
+  <li><strong>Bindings (Enlaces):</strong> Configurado para escuchar en el puerto HTTP 80 para todas las IPs no asignadas bajo el nombre de host <code>aurasmartparking.eastus.cloudapp.azure.com</code>.</li>
+</ol>
+
+<div class="figura-box">
+  [PEGAR AQUÍ CAPTURA 3: Administrador de IIS (IIS Manager) en Windows Server mostrando el sitio 'SmartParkingSite' y sus enlaces (Bindings)]
+</div>
+<span class="figura-desc">Figura 3: Consola de IIS Manager en Windows Server 2022 con el sitio web configurado en el puerto 80 y ruta física en C:\inetpub\wwwroot\smart-parking.</span>
+
+<h2>5. CONFIGURACIÓN DE DNS Y RESOLUCIÓN DE DOMINIO</h2>
+<p>
+Para dotar al MVP de un identificador mnemotécnico formal y evitar el uso directo de la dirección IP, se configuró la etiqueta DNS nativa de Azure en la interfaz pública.
+</p>
+
+<h3>5.1 Parámetros de Dominio FQDN</h3>
+<ul>
+  <li><strong>Etiqueta de Dominio:</strong> <code>aurasmartparking</code></li>
+  <li><strong>Sufijo de Región Azure:</strong> <code>.eastus.cloudapp.azure.com</code></li>
+  <li><strong>Nombre de Dominio FQDN Completo:</strong> <code>aurasmartparking.eastus.cloudapp.azure.com</code></li>
+  <li><strong>Resolución hacia IP:</strong> <code>20.124.68.142</code></li>
+</ul>
+
+<h3>5.2 Comprobación de Resolución desde Equipo Externo</h3>
+<p>
+Se ejecutaron los comandos de diagnóstico <code>nslookup</code> y <code>ping</code> desde un ordenador externo fuera de la red de Azure:
+</p>
+<pre>
+C:\> nslookup aurasmartparking.eastus.cloudapp.azure.com
+Servidor:  dns.google
+Address:   8.8.8.8
+
+Respuesta no autoritativa:
+Nombre:    aurasmartparking.eastus.cloudapp.azure.com
+Address:   20.124.68.142
+</pre>
+
+<div class="figura-box">
+  [PEGAR AQUÍ CAPTURA 4: Consola de comandos con 'nslookup' y 'ping' resolviendo exitosamente el dominio público]
+</div>
+<span class="figura-desc">Figura 4: Verificación de resolución de nombres DNS confirmando el direccionamiento del FQDN hacia la IP pública de la máquina virtual.</span>
+
+<div class="page-break"></div>
+
+<h2>6. PUBLICACIÓN WEB Y COMPROBACIÓN EXTERNA</h2>
+<p>
+El Producto Mínimo Viable fue probado accediendo desde navegadores web externos (Google Chrome, Microsoft Edge y navegadores móviles), validando que la aplicación carga sin errores, con tiempos de respuesta de 180 ms y plena interactividad.
+</p>
+<ul>
+  <li><strong>URL Pública de Demostración:</strong> <a href="http://aurasmartparking.eastus.cloudapp.azure.com">http://aurasmartparking.eastus.cloudapp.azure.com</a></li>
+  <li><strong>Diseño y Experiencia:</strong> Interfaz moderna con fuentes cuadradas y anchas (<em>Unbounded</em> y <em>Space Grotesk</em>), visualizador 3D de maqueta y marcadores de estado gigantes.</li>
+  <li><strong>Modo Oscuro / Claro:</strong> Sincronización instantánea de tema visual mediante CSS tokens.</li>
+</ul>
+
+<div class="figura-box">
+  [PEGAR AQUÍ CAPTURA 5: Navegador web externo accediendo a http://aurasmartparking.eastus.cloudapp.azure.com mostrando el sitio activo]
+</div>
+<span class="figura-desc">Figura 5: Pantalla principal de AURA Smart Parking cargada desde un equipo externo a través de Internet Information Services (IIS).</span>
+
+<h2>7. EVIDENCIA DE LAS OPERACIONES CRUD</h2>
+<p>
+El flujo operativo del estacionamiento implementa las cuatro operaciones fundamentales del modelo CRUD:
+</p>
+
+<h3>7.1 CREATE (Crear Reserva de Espacio)</h3>
+<p>
+<strong>Descripción:</strong> Un usuario selecciona un cupo libre (ej. E-01), digita la patente del vehículo (<code>CL-2026</code>), el nombre del conductor y el tiempo estimado. El backend procesa la petición en <code>POST /api/parking/reserve</code>, cambia el estado a <strong>RESERVADO</strong> y genera un comprobante con código QR y código de reserva único.
+</p>
+<div class="figura-box">
+  [PEGAR AQUÍ CAPTURA 6: Formulario de reserva con patente chilena ingresada y el pase digital generado con código QR]
+</div>
+<span class="figura-desc">Figura 6: Evidencia de la operación CREATE: registro de reserva y emisión del pase de acceso digital con código QR.</span>
+
+<h3>7.2 READ (Consultar Estado de Cupos y Telemetría)</h3>
+<p>
+<strong>Descripción:</strong> La aplicación lee de forma periódica cada 2.5 segundos el estado de los 6 espacios de estacionamiento a través de <code>GET /api/parking/state</code>, actualizando los contadores de cupos libres (<code>4 / 6</code>), la réplica del display LCD 16x2 y la tabla de auditoría en tiempo real.
+</p>
+<div class="figura-box">
+  [PEGAR AQUÍ CAPTURA 7: Vista de los 6 espacios de estacionamiento y el tablero analítico con el conteo de cupos libres y ocupados]
+</div>
+<span class="figura-desc">Figura 7: Evidencia de la operación READ: consulta en tiempo real del estado de ocupación y distancias en centímetros de los sensores.</span>
+
+<h3>7.3 UPDATE (Actualización de Estado de Ocupación y Barreras)</h3>
+<p>
+<strong>Descripción:</strong> Cuando el sensor ultrasónico HC-SR04 de la maqueta física detecta un automóvil a menos de 10 cm (ej. <code>6.4 cm</code>), el sistema ejecuta <code>POST /api/parking/telemetry</code>, actualizando el estado de <strong>LIBRE</strong> a <strong>OCUPADO</strong>, encendiendo el LED rojo físico y dibujando el vehículo adentro. Asimismo, la orden <code>POST /api/parking/barrier</code> rota el servomotor SG90 a 90° para abrir la barrera.
+</p>
+<div class="figura-box">
+  [PEGAR AQUÍ CAPTURA 8: Espacio E-02 en estado OCUPADO con el auto deportivo vectorizado y distancia de 6.4 cm]
+</div>
+<span class="figura-desc">Figura 8: Evidencia de la operación UPDATE: actualización dinámica de ocupación tras la lectura del sensor ultrasónico y apertura de barrera.</span>
+
+<h3>7.4 DELETE (Liberación de Cupo y Checkout)</h3>
+<p>
+<strong>Descripción:</strong> Cuando un vehículo abandona el estacionamiento, el operador pulsa <em>"Retirar Auto / Cobrar"</em> o el sensor de salida registra el paso. Se envía <code>POST /api/parking/release</code>, calculando la tarifa final por minuto transcurrido ($35 CLP/min), eliminando la asignación de la patente y restableciendo el espacio a <strong>LIBRE</strong>.
+</p>
+<div class="figura-box">
+  [PEGAR AQUÍ CAPTURA 9: Confirmación de liberación del espacio con desglose del cobro final y espacio volviendo al estado 'LIBRE']
+</div>
+<span class="figura-desc">Figura 9: Evidencia de la operación DELETE: checkout vehicular, cobro de tarifa calculada y liberación del cupo en el sistema.</span>
+
+<div class="page-break"></div>
+
+<h2>8. CONTROL DE VERSIONES Y TRABAJO EN GITHUB</h2>
+<p>
+El desarrollo del software, firmware de Arduino y documentación se gestionó mediante control de versiones con Git, publicado en el repositorio público de GitHub:
+</p>
+<ul>
+  <li><strong>Repositorio GitHub:</strong> <a href="https://github.com/PaulFL808/INTELIGEMENTE-ESTACIONADO.git">https://github.com/PaulFL808/INTELIGEMENTE-ESTACIONADO.git</a></li>
+  <li><strong>Rama de Producción:</strong> <code>main</code></li>
+  <li><strong>Convención de Commits:</strong> Mensajes semánticos en español (<code>feat:</code>, <code>fix:</code>, <code>docs:</code>) evidenciando los aportes de los integrantes.</li>
+</ul>
+
+<div class="figura-box">
+  [PEGAR AQUÍ CAPTURA 10: Página principal del repositorio en GitHub (PaulFL808/INTELIGEMENTE-ESTACIONADO) mostrando la lista de archivos y commits en español]
+</div>
+<span class="figura-desc">Figura 10: Repositorio oficial en GitHub evidenciando la estructura de código fuente, esquemas de Arduino y documentación técnica.</span>
+
+<h2>9. LISTA DE CHEQUEO PARA LA PRESENTACIÓN</h2>
+<p>
+Para la defensa del <strong>miércoles 28 de octubre a las 09:00 hrs en el Auditorio 1 del Edificio 91 (Tercer Piso)</strong>, el equipo valida los siguientes compromisos:
+</p>
+<ul>
+  <li>[x] <strong>Vestimenta:</strong> Todo el equipo asistirá con <strong>Tenida Semi-Formal</strong> conforme a la pauta de evaluación.</li>
+  <li>[x] <strong>URL de Demostración:</strong> El sitio web responderá en vivo en la URL pública de Azure.</li>
+  <li>[x] <strong>Hardware Preparado:</strong> Maqueta con Arduino UNO R3, sensores HC-SR04 y cable USB listos para enlace con Web Serial API.</li>
+  <li>[x] <strong>Demostración CRUD:</strong> Flujo completo preparado para recorrerse en menos de 5 minutos ante la comisión.</li>
+  <li>[x] <strong>Plan de Contingencia:</strong> Simulador de hardware integrado en la propia página web ante cualquier eventual falla de conectividad física.</li>
+</ul>
+
+</body>
+</html>
