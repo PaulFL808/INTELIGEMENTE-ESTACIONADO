@@ -193,9 +193,9 @@ export default function MaquetaView({
           <div className="flex items-center justify-between text-xs font-display font-bold text-zinc-500 border-b border-zinc-800 pb-2">
             <span className="flex items-center gap-1.5 text-emerald-400">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-              DISPLAY LCD
+              TÓTEM DE ACCESO DIGITAL
             </span>
-            <span>ARDUINO UNO</span>
+            <span>WINDOWS SERVER IIS</span>
           </div>
 
           <div className="space-y-1.5 py-1">
@@ -217,7 +217,7 @@ export default function MaquetaView({
           </div>
 
           <div className="text-[10px] text-zinc-500 font-mono flex items-center justify-between">
-            <span>Sincronizado con maqueta</span>
+            <span>Sincronizado con Azure Cloud</span>
             <span>1 seg</span>
           </div>
         </div>
@@ -372,9 +372,9 @@ export default function MaquetaView({
                 {/* Distance Gauge */}
                 <div className="p-3.5 bg-zinc-50 dark:bg-zinc-900/60 border-b-2 border-zinc-100 dark:border-zinc-800 space-y-1.5">
                   <div className="flex items-center justify-between text-xs font-mono font-bold">
-                    <span className="text-zinc-500">SENSOR:</span>
+                    <span className="text-zinc-500">DETECCIÓN:</span>
                     <span className={`text-sm font-extrabold ${slot.distanceCm < 10 ? 'text-red-500 font-display' : 'text-emerald-600 dark:text-emerald-400 font-display'}`}>
-                      {slot.distanceCm.toFixed(1)} cm
+                      {slot.distanceCm < 10 ? 'VEHÍCULO PRESENTE' : 'ESPACIO DESPEJADO'}
                     </span>
                   </div>
 

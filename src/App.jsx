@@ -3,13 +3,14 @@ import Header from './components/Header';
 import MaquetaView from './components/MaquetaView';
 import ReservationTerminal from './components/ReservationTerminal';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
-import HardwareBridge from './components/HardwareBridge';
+import CrudOperations from './components/CrudOperations';
 import ArchitectureDefense from './components/ArchitectureDefense';
 import { 
   getParkingState, 
   getLogs, 
   reserveSlot, 
   releaseSlot, 
+  updateSlot,
   sendTelemetry, 
   toggleBarrier, 
   resetParkingState 
@@ -22,7 +23,6 @@ export default function App() {
   const [logs, setLogs] = useState([]);
   const [preselectedSlot, setPreselectedSlot] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isSerialConnected, setIsSerialConnected] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
   const showToast = (text, type = 'info') => {
@@ -105,6 +105,13 @@ export default function App() {
     showToast(`Barrera de ${gate === 'entry' ? 'Entrada' : 'Salida'} ${res.barrier?.status === 'open' ? 'levantada a 90°' : 'cerrada a 0°'}`, 'info');
   };
 
+  const handleUpdateSlot = async (slotId, updateData) => {
+    const res = await updateSlot(slotId, updateData);
+    await loadData();
+    showToast(`Espacio E-0${slotId} actualizado exitosamente`, 'success');
+    return res;
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#fafafa] dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
       {/* Toast Notification */}
@@ -123,7 +130,6 @@ export default function App() {
         setCurrentTab={setCurrentTab}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
-        isArduinoConnected={isSerialConnected}
         onRefresh={handleManualRefresh}
         isRefreshing={isRefreshing}
       />
@@ -148,20 +154,20 @@ export default function App() {
           />
         )}
 
+        {currentTab === 'crud' && (
+          <CrudOperations
+            state={parkingState}
+            onReserveClick={handleReserveClick}
+            onReleaseClick={handleReleaseClick}
+            onUpdateSlot={handleUpdateSlot}
+            onRefresh={handleManualRefresh}
+          />
+        )}
+
         {currentTab === 'dashboard' && (
           <AnalyticsDashboard
             state={parkingState}
             logs={logs}
-          />
-        )}
-
-        {currentTab === 'hardware' && (
-          <HardwareBridge
-            state={parkingState}
-            onSimulateDistance={handleSimulateDistance}
-            onToggleBarrier={handleToggleBarrier}
-            isSerialConnected={isSerialConnected}
-            setIsSerialConnected={setIsSerialConnected}
           />
         )}
 
@@ -178,11 +184,11 @@ export default function App() {
               AURA SMART PARKING
             </span>
             <span>·</span>
-            <span>Arquitectura de Sistemas & Programación en la Nube</span>
+            <span>Arquitectura de Sistemas & Programación en la Nube (IPST)</span>
           </div>
 
           <div className="flex items-center gap-4 font-mono text-[11px]">
-            <span>MAQUETA FÍSICA: ARDUINO UNO R3</span>
+            <span>WINDOWS SERVER 2022 + IIS 10.0</span>
             <span>·</span>
             <span>MICROSOFT AZURE CLOUD</span>
             <span>·</span>

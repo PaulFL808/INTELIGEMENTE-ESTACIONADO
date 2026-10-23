@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   Radio, 
-  Cpu, 
+  Database, 
   Cloud, 
   ShieldCheck, 
   LayoutDashboard, 
@@ -10,7 +10,8 @@ import {
   Moon, 
   Sun,
   RefreshCw,
-  Car
+  Car,
+  Server
 } from 'lucide-react';
 
 export default function Header({ 
@@ -18,16 +19,15 @@ export default function Header({
   setCurrentTab, 
   darkMode, 
   setDarkMode, 
-  isArduinoConnected, 
   onRefresh,
   isRefreshing 
 }) {
   const tabs = [
     { id: 'maqueta', label: 'Estacionamiento 3D', icon: LayoutDashboard },
     { id: 'reserva', label: 'Reservar Cupo', icon: CalendarClock },
+    { id: 'crud', label: 'Operaciones CRUD', icon: Database },
     { id: 'dashboard', label: 'Dashboard & Métricas', icon: Radio },
-    { id: 'hardware', label: 'Arduino & Sensores', icon: Cpu },
-    { id: 'arquitectura', label: 'Defensa Azure', icon: Layers },
+    { id: 'arquitectura', label: 'Azure & IIS', icon: Layers },
   ];
 
   return (
@@ -42,14 +42,10 @@ export default function Header({
               <span>AZURE CLOUD · EN LÍNEA</span>
             </span>
 
-            <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg border font-bold text-xs ${
-              isArduinoConnected 
-                ? 'bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300' 
-                : 'bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300'
-            }`}>
-              <span className={`w-2.5 h-2.5 rounded-full ${isArduinoConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`}></span>
-              <Cpu className="w-4 h-4" />
-              <span>{isArduinoConnected ? 'ARDUINO: CONECTADO' : 'ARDUINO: MODO SIMULADOR'}</span>
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-lg border font-bold text-xs bg-blue-50 text-blue-800 border-blue-300 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800">
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse"></span>
+              <Server className="w-4 h-4" />
+              <span>WINDOWS SERVER 2022 · IIS 10.0</span>
             </span>
           </div>
 

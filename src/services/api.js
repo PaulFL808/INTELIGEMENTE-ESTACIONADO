@@ -286,6 +286,39 @@ export async function getLogs() {
   }
 }
 
+export async function updateSlot(slotId, updateData) {
+  try {
+    const res = await fetch(`${API_BASE}/slots/${slotId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updateData),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Error al actualizar espacio');
+    return data;
+  } catch (err) {
+    const slot = localSlots.find(s => s.id === Number(slotId));
+    if (!slot) throw new Error('Espacio no encontrado');
+    if (updateData.status) slot.status = updateData.status;
+    if (updateData.vehiclePlate !== undefined) slot.vehiclePlate = updateData.vehiclePlate;
+    if (updateData.driverName !== undefined) slot.driverName = updateData.driverName;
+    return { success: true, data: slot, message: 'Espacio actualizado localmente' };
+  }
+}
+
+export async function deleteSlot(slotId) {
+  try {
+    const res = await fetch(`${API_BASE}/slots/${slotId}`, {
+      method: 'DELETE',
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Error al eliminar registro');
+    return data;
+  } catch (err) {
+    return releaseSlot(slotId);
+  }
+}
+
 export async function resetParkingState() {
   try {
     const res = await fetch(`${API_BASE}/reset`, { method: 'POST' });

@@ -130,9 +130,9 @@ let eventLogs = [
   {
     id: 'log-1',
     timestamp: new Date(Date.now() - 40 * 60 * 1000).toISOString(),
-    source: 'Arduino UNO / Sensor Ultrasónico 2',
+    source: 'Sistema de Telemetría / Sensor Cupo 2',
     type: 'OCCUPANCY_CHANGE',
-    details: 'Espacio E-02 detectó vehículo a 6.4 cm (< 10 cm). Marcado como Ocupado.',
+    details: 'Espacio E-02 detectó vehículo presente. Marcado como Ocupado.',
     severity: 'info',
   },
   {
@@ -146,7 +146,7 @@ let eventLogs = [
   {
     id: 'log-3',
     timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-    source: 'Servomotor SG90 / Barrera Entrada',
+    source: 'Controlador de Acceso / Barrera Entrada',
     type: 'BARRIER_CYCLE',
     details: 'Barrera de entrada levantada a 90° para ingreso autorizado. Cierre automático completado.',
     severity: 'info',
@@ -323,6 +323,77 @@ app.post('/api/parking/release', (req, res) => {
       releasedAt: new Date().toISOString(),
     },
     message: `Espacio ${slot.code} liberado correctamente.`,
+  });
+});
+
+// 4.1 Actualizar registro de un espacio (CRUD: UPDATE)
+app.put('/api/parking/slots/:id', (req, res) => {
+  const { id } = req.params;
+  const { status, vehiclePlate, driverName, type } = req.body;
+  const slot = parkingState.slots.find(s => s.id === Number(id));
+
+  if (!slot) {
+    return res.status(404).json({ success: false, message: 'Espacio no encontrado' });
+  }
+
+  const previousStatus = slot.status;
+  if (status !== undefined) slot.status = status;
+  if (vehiclePlate !== undefined) slot.vehiclePlate = vehiclePlate ? vehiclePlate.trim().toUpperCase() : null;
+  if (driverName !== undefined) slot.driverName = driverName ? driverName.trim() : null;
+  if (type !== undefined) slot.type = type;
+
+  if (slot.status === 'occupied') {
+    slot.distanceCm = 6.0;
+    if (!slot.occupiedAt) slot.occupiedAt = new Date().toISOString();
+  } else if (slot.status === 'available') {
+    slot.distanceCm = 45.0;
+    slot.vehiclePlate = null;
+    slot.driverName = null;
+    slot.occupiedAt = null;
+    slot.reservedAt = null;
+    slot.totalMinutes = 0;
+    slot.feeCLP = 0;
+  } else if (slot.status === 'reserved') {
+    slot.distanceCm = 45.0;
+    if (!slot.reservedAt) slot.reservedAt = new Date().toISOString();
+  }
+
+  addLog('API REST / CRUD Manager', 'SLOT_UPDATED', `Espacio ${slot.code} actualizado. Estado: ${slot.status.toUpperCase()} (Vehículo: ${slot.vehiclePlate || 'N/A'}).`, 'info');
+
+  res.json({
+    success: true,
+    data: slot,
+    message: `Espacio ${slot.code} actualizado exitosamente`,
+  });
+});
+
+// 4.2 Eliminar / Cancelar registro de espacio (CRUD: DELETE)
+app.delete('/api/parking/slots/:id', (req, res) => {
+  const { id } = req.params;
+  const slot = parkingState.slots.find(s => s.id === Number(id));
+
+  if (!slot) {
+    return res.status(404).json({ success: false, message: 'Espacio no encontrado' });
+  }
+
+  const prevPlate = slot.vehiclePlate || 'N/A';
+  const prevDriver = slot.driverName || 'Conductor';
+  
+  slot.status = 'available';
+  slot.distanceCm = 45.0;
+  slot.vehiclePlate = null;
+  slot.driverName = null;
+  slot.reservedAt = null;
+  slot.occupiedAt = null;
+  slot.totalMinutes = 0;
+  slot.feeCLP = 0;
+
+  addLog('API REST / CRUD Manager', 'SLOT_DELETED', `Registro de espacio ${slot.code} eliminado. Vehículo anterior: ${prevPlate} (${prevDriver}). Espacio libre.`, 'warning');
+
+  res.json({
+    success: true,
+    data: slot,
+    message: `Registro de espacio ${slot.code} eliminado exitosamente.`,
   });
 });
 
