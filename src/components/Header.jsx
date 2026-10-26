@@ -20,7 +20,8 @@ export default function Header({
   darkMode, 
   setDarkMode, 
   onRefresh,
-  isRefreshing 
+  isRefreshing,
+  isFirebaseConnected
 }) {
   const tabs = [
     { id: 'maqueta', label: 'Estacionamiento 3D', icon: LayoutDashboard },
@@ -35,17 +36,27 @@ export default function Header({
       {/* Top Telemetry Micro-Bar: Clean & Direct */}
       <div className="border-b border-zinc-200/80 dark:border-zinc-800/80 px-4 sm:px-8 py-2 text-xs sm:text-sm">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-zinc-600 dark:text-zinc-400 font-sans font-medium">
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <span className="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-3 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800 font-bold text-xs">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
               <Cloud className="w-4 h-4" />
               <span>AZURE CLOUD · EN LÍNEA</span>
             </span>
 
+            <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg border font-bold text-xs ${
+              isFirebaseConnected 
+                ? 'bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800' 
+                : 'bg-zinc-100 text-zinc-700 border-zinc-300 dark:bg-zinc-800 dark:text-zinc-300'
+            }`}>
+              <span className={`w-2.5 h-2.5 rounded-full ${isFirebaseConnected ? 'bg-amber-500 animate-pulse' : 'bg-zinc-400'}`}></span>
+              <Database className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              <span>FIRESTORE · NUBARDA</span>
+            </span>
+
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-lg border font-bold text-xs bg-blue-50 text-blue-800 border-blue-300 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800">
               <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse"></span>
               <Server className="w-4 h-4" />
-              <span>WINDOWS SERVER 2022 · IIS 10.0</span>
+              <span>WINDOWS SERVER 2022</span>
             </span>
           </div>
 
@@ -78,7 +89,7 @@ export default function Header({
               </span>
             </div>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 font-sans font-medium">
-              Estacionamiento Inteligente IoT
+              Gestión de Estacionamiento en Tiempo Real
             </p>
           </div>
         </div>
@@ -118,7 +129,7 @@ export default function Header({
 
           <button
             onClick={() => setDarkMode(!darkMode)}
-            title="Modo Oscuro / Claro"
+            title="Alternar Tema Oscuro/Claro"
             className="p-2.5 rounded-xl border-2 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 active:scale-95 transition-all shadow-sm"
           >
             {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-zinc-700" />}
@@ -126,8 +137,8 @@ export default function Header({
         </div>
       </div>
 
-      {/* Sub-Navigation Bar for Mobile / Tablets */}
-      <div className="xl:hidden flex items-center overflow-x-auto px-4 py-2 gap-2 border-t-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 no-scrollbar">
+      {/* Mobile / Tablet Horizontal Navigation Tabs */}
+      <div className="xl:hidden overflow-x-auto border-t border-zinc-200 dark:border-zinc-800 px-4 py-2 flex items-center gap-2 scrollbar-none">
         {tabs.map(tab => {
           const Icon = tab.icon;
           const isActive = currentTab === tab.id;
@@ -135,10 +146,10 @@ export default function Header({
             <button
               key={tab.id}
               onClick={() => setCurrentTab(tab.id)}
-              className={`flex-shrink-0 flex items-center gap-2 px-3.5 py-1.5 rounded-xl font-display text-xs font-bold uppercase tracking-wide transition-all ${
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl font-display text-xs font-bold whitespace-nowrap transition-all ${
                 isActive
-                  ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 shadow-sm'
-                  : 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400'
+                  ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950'
+                  : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300'
               }`}
             >
               <Icon className="w-3.5 h-3.5" />

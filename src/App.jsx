@@ -15,6 +15,14 @@ import {
   toggleBarrier, 
   resetParkingState 
 } from './services/api';
+import {
+  seedInitialSlotsIfEmpty,
+  subscribeToParkingSlots,
+  subscribeToAuditLogs,
+  createReservationInFirestore,
+  updateSlotInFirestore,
+  releaseSlotInFirestore
+} from './services/firebase';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState('maqueta');
@@ -24,33 +32,77 @@ export default function App() {
   const [preselectedSlot, setPreselectedSlot] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
+  const [isFirebaseConnected, setIsFirebaseConnected] = useState(false);
 
   const showToast = (text, type = 'info') => {
     setToastMessage({ text, type });
     setTimeout(() => setToastMessage(null), 4000);
   };
 
-  // Sync state
+  // Sync state con fallback API REST
   const loadData = async () => {
     try {
       const [stateData, logsData] = await Promise.all([
         getParkingState(),
         getLogs(),
       ]);
-      setParkingState(stateData);
-      setLogs(logsData);
+      setParkingState(prev => prev ? { ...stateData, slots: prev.slots || stateData.slots } : stateData);
+      if (!isFirebaseConnected) {
+        setLogs(logsData);
+      }
     } catch (err) {
-      console.error('Error synchronizing:', err);
+      console.error('Error synchronizing REST API:', err);
     }
   };
 
+  // Conexión y suscripción en tiempo real a Firebase Firestore
   useEffect(() => {
     loadData();
-    // Polling ligero cada 2.5s para actualización en vivo
-    const timer = setInterval(() => {
-      loadData();
-    }, 2500);
-    return () => clearInterval(timer);
+
+    // 1. Sembrar cupos en Firestore si la colección está vacía
+    seedInitialSlotsIfEmpty().then(() => {
+      setIsFirebaseConnected(true);
+    }).catch(err => {
+      console.warn('[Firebase] Inicialización:', err);
+    });
+
+    // 2. Suscribirse a cambios en vivo de los cupos (Real-time listener de Firestore)
+    const unsubscribeSlots = subscribeToParkingSlots((firestoreSlots) => {
+      if (firestoreSlots && firestoreSlots.length > 0) {
+        setIsFirebaseConnected(true);
+        setParkingState(prev => {
+          const availableCount = firestoreSlots.filter(s => s.status === 'available').length;
+          const occupiedCount = firestoreSlots.filter(s => s.status === 'occupied').length;
+          const reservedCount = firestoreSlots.filter(s => s.status === 'reserved').length;
+
+          return {
+            ...(prev || {}),
+            slots: firestoreSlots,
+            barriers: prev?.barriers || { entry: { status: 'closed', angle: 0 }, exit: { status: 'closed', angle: 0 } },
+            pricing: prev?.pricing || { baseRatePerHour: 2000, minuteRate: 35 },
+            summary: {
+              total: firestoreSlots.length,
+              available: availableCount,
+              occupied: occupiedCount,
+              reserved: reservedCount,
+              occupancyPercentage: Math.round(((occupiedCount + reservedCount) / firestoreSlots.length) * 100),
+            }
+          };
+        });
+      }
+    });
+
+    // 3. Suscribirse a logs en vivo en Firestore
+    const unsubscribeLogs = subscribeToAuditLogs((firestoreLogs) => {
+      if (firestoreLogs && firestoreLogs.length > 0) {
+        setLogs(firestoreLogs);
+      }
+    });
+
+    return () => {
+      if (typeof unsubscribeSlots === 'function') unsubscribeSlots();
+      if (typeof unsubscribeLogs === 'function') unsubscribeLogs();
+    };
   }, []);
 
   // Sync dark mode class
@@ -66,7 +118,7 @@ export default function App() {
     setIsRefreshing(true);
     await loadData();
     setTimeout(() => setIsRefreshing(false), 500);
-    showToast('Telemetría sincronizada con Azure Cloud', 'success');
+    showToast('Sincronizado con Firebase Firestore & Azure Cloud', 'success');
   };
 
   const handleReserveClick = (slot) => {
@@ -79,24 +131,47 @@ export default function App() {
       return;
     }
     try {
-      const res = await releaseSlot(slot.id);
-      await loadData();
-      showToast(`Espacio ${slot.code} liberado. Cobro generado: $${res.receipt?.totalFeeCLP || 1500} CLP`, 'success');
+      // 1. Liberar en Firebase Firestore
+      await releaseSlotInFirestore(slot.id, slot.vehiclePlate || 'N/A', slot.driverName || 'Conductor', slot.totalMinutes || 45);
+      
+      // 2. Liberar también en API REST local como respaldo
+      try { await releaseSlot(slot.id); } catch(e) {}
+
+      showToast(`Espacio ${slot.code} liberado en Firebase Firestore. Cobro liquidado.`, 'success');
     } catch (err) {
       showToast(err.message || 'Error al liberar espacio', 'error');
     }
   };
 
   const handleConfirmReservation = async (slotId, vehiclePlate, driverName, durationMinutes) => {
-    const res = await reserveSlot(slotId, vehiclePlate, driverName, durationMinutes);
-    await loadData();
-    showToast(`Reserva confirmada en ${res.data?.code || 'espacio'}. Pase emitido.`, 'success');
-    return res;
+    try {
+      // 1. Guardar en Firebase Firestore
+      await createReservationInFirestore(slotId, vehiclePlate, driverName, durationMinutes);
+
+      // 2. Guardar en API REST local como respaldo
+      try { await reserveSlot(slotId, vehiclePlate, driverName, durationMinutes); } catch(e) {}
+
+      showToast(`Reserva guardada en Firestore para ${vehiclePlate}. Pase QR emitido.`, 'success');
+      return { success: true, data: { code: `E-0${slotId}` } };
+    } catch (err) {
+      showToast(err.message || 'Error al guardar reserva', 'error');
+      throw err;
+    }
   };
 
   const handleSimulateDistance = async (slotId, distanceCm) => {
-    await sendTelemetry(slotId, distanceCm);
-    await loadData();
+    try {
+      const isPresent = distanceCm < 10;
+      await updateSlotInFirestore(slotId, {
+        distanceCm,
+        status: isPresent ? 'occupied' : 'available',
+        vehiclePlate: isPresent ? 'AUTO-DETECT' : null,
+        driverName: isPresent ? 'Conductor Presente' : null,
+      });
+    } catch (e) {
+      await sendTelemetry(slotId, distanceCm);
+      await loadData();
+    }
   };
 
   const handleToggleBarrier = async (gate) => {
@@ -106,10 +181,19 @@ export default function App() {
   };
 
   const handleUpdateSlot = async (slotId, updateData) => {
-    const res = await updateSlot(slotId, updateData);
-    await loadData();
-    showToast(`Espacio E-0${slotId} actualizado exitosamente`, 'success');
-    return res;
+    try {
+      // 1. Actualizar en Firebase Firestore
+      await updateSlotInFirestore(slotId, updateData);
+
+      // 2. Actualizar en API local
+      try { await updateSlot(slotId, updateData); } catch(e) {}
+
+      showToast(`Espacio E-0${slotId} actualizado en Firestore [UPDATE]`, 'success');
+      return { success: true };
+    } catch (err) {
+      showToast(err.message || 'Error al actualizar', 'error');
+      throw err;
+    }
   };
 
   return (
@@ -132,6 +216,7 @@ export default function App() {
         setDarkMode={setDarkMode}
         onRefresh={handleManualRefresh}
         isRefreshing={isRefreshing}
+        isFirebaseConnected={isFirebaseConnected}
       />
 
       {/* Main Container */}
@@ -184,13 +269,13 @@ export default function App() {
               AURA SMART PARKING
             </span>
             <span>·</span>
-            <span>Arquitectura de Sistemas & Programación en la Nube (IPST)</span>
+            <span>Arquitectura de Sistemas & Cloud Computing (IPST)</span>
           </div>
 
           <div className="flex items-center gap-4 font-mono text-[11px]">
-            <span>WINDOWS SERVER 2022 + IIS 10.0</span>
+            <span>FIREBASE FIRESTORE: NUBARDA</span>
             <span>·</span>
-            <span>MICROSOFT AZURE CLOUD</span>
+            <span>AZURE VM + IIS</span>
             <span>·</span>
             <button
               onClick={async () => {
