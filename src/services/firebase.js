@@ -14,15 +14,15 @@ import {
   limit
 } from 'firebase/firestore';
 
-// Credenciales oficiales del proyecto Firebase del usuario
+// Credenciales leídas de forma segura desde variables de entorno (.env)
 export const firebaseConfig = {
-  apiKey: "AIzaSyAjE5m3qk8NrLso0oMDu4MDEXhdiHM_dSY",
-  authDomain: "nubarda.firebaseapp.com",
-  projectId: "nubarda",
-  storageBucket: "nubarda.firebasestorage.app",
-  messagingSenderId: "971025022567",
-  appId: "1:971025022567:web:6f654a2087e980775a5ec2",
-  measurementId: "G-DFXZL4FZ3L"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "nubarda.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "nubarda",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "nubarda.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "971025022567",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:971025022567:web:6f654a2087e980775a5ec2",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-DFXZL4FZ3L"
 };
 
 // Inicializar Firebase
