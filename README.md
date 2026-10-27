@@ -56,3 +56,28 @@ El sistema incorpora segregación estricta de perfiles:
 3. **Documentación Maestra de Arquitectura y Código:** [`DOCUMENTACION_TECNICA_ARQUITECTURA_Y_CODIGO.md`](DOCUMENTACION_TECNICA_ARQUITECTURA_Y_CODIGO.md)
 4. **Defensa Técnica y Pauta 100 Puntos:** [`DOCUMENTACION_ARQUITECTURA_AZURE.md`](DOCUMENTACION_ARQUITECTURA_AZURE.md)
 5. **Presentación PowerPoint 16:9 Estilo Apple Keynote:** [`Presentacion_AURA_SmartParking_Azure.pptx`](Presentacion_AURA_SmartParking_Azure.pptx)
+6. **Galería Oficial de Diagramas PNG de Alta Resolución (Estética Obsidian Dark / AURA):**
+   * [`01_diagrama_arquitectura_4_capas.png`](diagramas/01_diagrama_arquitectura_4_capas.png) — Modelo Cliente-Servidor Multi-Capa en 4 Capas.
+   * [`02_diagrama_infraestructura_red_azure.png`](diagramas/02_diagrama_infraestructura_red_azure.png) — Topología de Red Cloud Azure, VNet, NSG, VM IIS y DNS en Chile Central.
+   * [`03_diagrama_seguridad_rbac_jwt.png`](diagramas/03_diagrama_seguridad_rbac_jwt.png) — Matriz RBAC, flujo y anatomía de tokens criptográficos JWT RFC 7519.
+   * [`04_diagrama_flujo_reserva_e2e.png`](diagramas/04_diagrama_flujo_reserva_e2e.png) — Trazabilidad transaccional end-to-end de reserva y pase digital QR.
+   * [`05_diagrama_escalabilidad_cloud.png`](diagramas/05_diagrama_escalabilidad_cloud.png) — Hoja de ruta de escalabilidad elástica cloud (100 a 10.000 usuarios).
+
+---
+
+### 📊 Diagramas de Arquitectura, Red y Seguridad (Formato PNG)
+
+#### 1. Modelo Cliente-Servidor Multi-Capa (4 Capas Desacopladas)
+![Arquitectura 4 Capas](diagramas/01_diagrama_arquitectura_4_capas.png)
+
+#### 2. Infraestructura y Topología de Red Microsoft Azure (Chile Central)
+![Infraestructura de Red Azure](diagramas/02_diagrama_infraestructura_red_azure.png)
+
+#### 3. Seguridad RBAC y Criptografía de Tokens JWT (RFC 7519)
+![Seguridad RBAC y JWT](diagramas/03_diagrama_seguridad_rbac_jwt.png)
+
+#### 4. Flujo Transaccional E2E de Reserva y Pase Digital QR
+![Flujo E2E de Reserva](diagramas/04_diagrama_flujo_reserva_e2e.png)
+
+#### 5. Proyección de Escalabilidad Elástica en la Nube
+![Escalabilidad Cloud](diagramas/05_diagrama_escalabilidad_cloud.png)

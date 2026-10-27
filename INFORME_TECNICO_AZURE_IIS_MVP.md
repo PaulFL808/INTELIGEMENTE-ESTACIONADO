@@ -288,6 +288,7 @@ $ git log --oneline -n 5
 ```
 
 ### 8.3 Archivos Clave en el Repositorio
+* `diagramas/`: Galería oficial de diagramas en PNG de alta resolución (Arquitectura 4 capas, Red Azure, Seguridad RBAC/JWT, Flujo E2E y Escalabilidad).
 * `arduino/smart_parking_uno.ino`: Código en C++ para el microcontrolador ATmega328P.
 * `server/index.js`: Backend Express con endpoints REST para IIS y Azure.
 * `src/`: Aplicación frontend en React 18 con fuentes *Unbounded* y *Space Grotesk*.
