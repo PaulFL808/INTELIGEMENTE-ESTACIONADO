@@ -19,8 +19,9 @@
 | Integrante | Rol Principal | Responsabilidades Específicas |
 |---|---|---|
 | **Fabián Mora** | Interfaz y Experiencia de Usuario (UI/UX) | Desarrollo de la SPA reactiva en React 18 con Vite y Tailwind CSS. Implementación del mapa interactivo de cupos, animaciones vehiculares, terminal de reservas con emisión de Pase QR y accesibilidad responsive. |
-| **Agustín Cañas** | Arquitectura y Lógica de Negocio | Definición y diseño de la arquitectura por capas, contratos de API REST, motor de reglas de negocio (validación de patentes chilenas, tarificación a $35 CLP/min) y trazabilidad del flujo de solicitudes. |
-| **Paul Ferrada** | Datos, Integración y Cloud Azure | Persistencia de datos en la nube con Firebase Firestore (`nubarda`), aprovisionamiento de Máquina Virtual Windows Server 2022 en Microsoft Azure, servidor IIS 10.0, reglas NSG y resolución FQDN pública. |
+| **Agustín Cañas** | Arquitectura y Lógica de Negocio | Modelo Cliente-Servidor Multi-Capa (4 capas desacopladas), controladores de dominio, motor de reglas de ocupación, tarificación a $35 CLP/min y validación estricta de patentes chilenas. |
+| **Paul Ferrada** | Infraestructura Cloud & DevOps (Azure) | Aprovisionamiento de Máquina Virtual Windows Server 2022 en Chile Central, servidor IIS 10.0 en puerto 80, reglas de seguridad NSG y resolución FQDN pública con Azure DNS. |
+| **Felipe Labarca** | Seguridad, Autenticación (JWT) & Persistencia Cloud | Sistema de autenticación y roles RBAC (Usuario Normal vs Admin), protección criptográfica con Tokens JWT (RFC 7519), integración de base de datos NoSQL con Firebase Firestore (`nubarda`) y trazabilidad de auditoría. |
 
 ---
 
@@ -326,31 +327,35 @@ Para el Criterio 7 de la rúbrica (10 puntos), la comisión evaluadora pide expl
 | **6. Integración y explicación de servicios cloud** | 10 | **100% CUMPLIDO** | Explicación detallada de Azure VM Standard_B2s, IIS 10.0 con ARR, Azure NSG (puertos 80, 443, 3001, 3389), Azure DNS y Firebase Firestore (`nubarda`). |
 | **7. Demostración en vivo y trazabilidad del flujo** | 10 | **100% CUMPLIDO** | Componente interactivo de trazabilidad paso a paso en la pestaña "Azure & IIS" y consola de auditoría CRUD en tiempo real en "Operaciones CRUD". |
 | **8. Documentación técnica y evidencias** | 5 | **100% CUMPLIDO** | Repositorio GitHub sincronizado, informe Word técnico (`.docx`), informe Markdown, presentación PowerPoint (`.pptx`) y código limpio. |
-| **9. Participación individual y respuestas técnicas** | 5 | **100% CUMPLIDO** | Responsabilidades asignadas con nombre y apellido para **Fabián Mora**, **Agustín Cañas** y **Paul Ferrada**, con dominio transversal de la solución. |
+| **9. Participación individual y respuestas técnicas** | 5 | **100% CUMPLIDO** | Responsabilidades asignadas con nombre y apellido para **Paul Ferrada**, **Agustín Cañas**, **Fabián Mora** y **Felipe Labarca**, con dominio transversal de la solución. |
 | **PUNTAJE TOTAL ESTIMADO** | **100** | **EXCELENCIA** | Cumplimiento del 100% de la pauta oficial del Instituto Profesional Santo Tomás. |
 
 ---
 
 ## 7. GUION DE DEFENSA EN AUDITORIO (15 MINUTOS)
 
-Estructura ajustada a la Sección 10 de la pauta para los 3 integrantes:
+Estructura ajustada a la Sección 10 de la pauta para los 4 integrantes del equipo:
 
-* **Minuto 0:00 a 2:00 — Problema y Objetivo (Fabián Mora):**
-  * Saludo a la comisión académica de Santo Tomás.
+* **Minuto 0:00 a 3:00 — Problema, Contexto y Propuesta de Valor (Fabián Mora):**
+  * Saludo formal a la comisión académica de Santo Tomás.
   * Planteamiento de la problemática: el 30% del tráfico urbano se genera por conductores buscando estacionamiento.
-  * Presentación de AURA Smart Parking como solución digital en la nube.
-* **Minuto 2:00 a 5:00 — Arquitectura Elegida y Justificación (Agustín Cañas):**
-  * Exposición de la arquitectura en 4 capas y el diagrama de bloques.
-  * Justificación técnica: por qué una SPA desacoplada con API REST y Firestore supera a un monolito MVC tradicional.
-* **Minuto 5:00 a 8:00 — Demostración en Vivo & CRUD (Fabián Mora y Agustín Cañas):**
-  * Demostración en vivo desde el proyector en [http://puntoalerce.chilecentral.cloudapp.azure.com](http://puntoalerce.chilecentral.cloudapp.azure.com).
-  * Crear una reserva con patente chilena (CREATE), ver el cambio en vivo a ámbar (READ), modificar un espacio (UPDATE) y liberar el vehículo con cobro por minuto (DELETE).
-* **Minuto 8:00 a 10:00 — Infraestructura en Microsoft Azure (Paul Ferrada):**
-  * Explicación de la Máquina Virtual Windows Server 2022 Datacenter, el servidor IIS 10.0 en el puerto 80, las reglas del grupo de seguridad de red (NSG) y el FQDN de Azure DNS en Chile Central.
-* **Minuto 10:00 a 13:00 — Defensa Técnica y Escalabilidad (Paul Ferrada y Agustín Cañas):**
-  * Respuesta a la pregunta de escalabilidad: cómo pasar de 100 a 10.000 usuarios con Azure VMSS, Redis Cache y Azure CDN.
-* **Minuto 13:00 a 15:00 — Cierre y Conclusiones (Los 3 Integrantes):**
-  * Conclusiones del proyecto, agradecimientos y apertura para la ronda de preguntas de los profesores.
+  * Presentación de AURA Smart Parking y demo de la UI/UX en React 18 con mapa interactivo y reserva con Pase Digital QR.
+* **Minuto 3:00 a 6:00 — Arquitectura de Software y Lógica de Negocio (Agustín Cañas):**
+  * Paradigma de red: Modelo Cliente-Servidor Multi-Capa (4 Capas Desacopladas).
+  * Justificación técnica: por qué una SPA desacoplada con API REST supera al monolito MVC tradicional.
+  * Motor de reglas de dominio: tarificación ($35 CLP/min) y validaciones de patentes chilenas.
+* **Minuto 6:00 a 10:00 — Infraestructura Cloud en Microsoft Azure (Paul Ferrada):**
+  * Aprovisionamiento de VM Standard_B2s en la región Chile Central sobre Windows Server 2022 Datacenter.
+  * Servidor Web IIS 10.0 sirviendo el frontend en el puerto 80 (`C:\inetpub\wwwroot`).
+  * Seguridad perimetral con NSG (puerto 80 HTTP y 3389 RDP).
+  * Resolución de dominio público con Azure DNS FQDN: `puntoalerce.chilecentral.cloudapp.azure.com` (IP `68.211.136.184`).
+* **Minuto 10:00 a 13:00 — Seguridad JWT, Persistencia NoSQL y Escalabilidad (Felipe Labarca):**
+  * Sistema de roles RBAC (Usuario Normal para consulta/reserva vs Administrador con CRUD completo).
+  * Protección de datos con Tokens JWT firmados bajo el estándar RFC 7519 (`Authorization: Bearer <token>`).
+  * Persistencia NoSQL en tiempo real con Firebase Firestore (`nubarda`) vía WebSockets (`onSnapshot`).
+  * Estrategia de escalado de 100 a 10.000 usuarios con Azure VMSS, Redis Cache y Edge CDN.
+* **Minuto 13:00 a 15:00 — Conclusiones y Ronda de Preguntas (Los 4 Integrantes):**
+  * Conclusiones técnicas del proyecto, agradecimientos y apertura para la ronda de preguntas de los profesores.
 
 
 ---

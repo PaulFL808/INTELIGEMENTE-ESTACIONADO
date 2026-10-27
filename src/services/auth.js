@@ -107,7 +107,7 @@ export const USERS = [
     username: 'admin',
     email: 'admin@aura.cl',
     password: 'admin',
-    name: 'Paul / Fabián / Agustín',
+    name: 'Paul / Agustín / Fabián / Felipe',
     role: 'admin',
     roleLabel: 'Administrador del Sistema',
     avatar: '🛡️',

@@ -139,7 +139,7 @@ export default function Header({
                 title="Sesión de Administrador activa. Clic para cambiar"
               >
                 <ShieldCheck className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                <span className="truncate max-w-[150px]">ADMIN: {currentUser?.name || 'Paul / Fabián / Agustín'}</span>
+                <span className="truncate max-w-[150px]">ADMIN: {currentUser?.name || 'Paul / Agustín / Fabián / Felipe'}</span>
               </button>
 
               <button

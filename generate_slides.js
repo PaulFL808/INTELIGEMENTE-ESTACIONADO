@@ -123,12 +123,12 @@ const coverCards = [
   {
     pill: 'EQUIPO TÉCNICO',
     pillColor: C_GREEN,
-    title: '3 Integrantes',
+    title: '4 Integrantes Clave',
     lines: [
       { b: 'Fabián Mora: ', t: 'Interfaz & UX (React 18)' },
       { b: 'Agustín Cañas: ', t: 'Arquitectura & Lógica' },
-      { b: 'Paul Ferrada: ', t: 'Cloud & Datos (Azure)' },
-      { b: 'Institución: ', t: 'IP Santo Tomás' }
+      { b: 'Paul Ferrada: ', t: 'Cloud & Azure (IIS)' },
+      { b: 'Felipe Labarca: ', t: 'Seguridad JWT & Firestore' }
     ]
   },
   {
@@ -190,7 +190,7 @@ slide1.addText('01 / 10  ·  Minuto 0:00 - 2:00', {
   fontSize: 8.5, fontFace: FONT_PRIMARY, color: C_DIM, align: 'right', valign: 'bottom'
 });
 
-slide1.addNotes('MINUTO 0:00 - Saludo inicial a la comisión evaluadora de Santo Tomás. Presentación del equipo de 3 integrantes (Fabián Mora, Agustín Cañas, Paul Ferrada) y declaración de objetivos del proyecto AURA Smart Parking, articulando Arquitectura de Sistemas y Programación en la Nube.');
+slide1.addNotes('MINUTO 0:00 - Saludo inicial a la comisión evaluadora de Santo Tomás. Presentación del equipo de 4 integrantes (Paul Ferrada, Agustín Cañas, Fabián Mora, Felipe Labarca) y declaración de objetivos del proyecto AURA Smart Parking, articulando Arquitectura de Sistemas y Programación en la Nube.');
 
 // ===========================================================================
 // SLIDE 2: PROBLEMA & OBJETIVO
@@ -800,7 +800,7 @@ const team = [
       'Sistema de estilos modulares con Tailwind CSS.',
       'Diseño de mapa interactivo SVG de 6 cupos con estados.',
       'Terminal de reservas con validación de patentes chilenas.',
-      'Generación de Pase Digital QR y feedback sonoro.'
+      'Generación de Pase Digital QR y feedback visual/sonoro.'
     ]
   },
   {
@@ -808,64 +808,76 @@ const team = [
     title: 'Arquitectura & Lógica de Negocio',
     color: C_GREEN,
     points: [
-      'Definición del modelo desacoplado en 4 capas de software.',
+      'Modelo Cliente-Servidor Multi-Capa (4 capas de software).',
       'Orquestación de estados: Disponible, Reservado y Ocupado.',
-      'Algoritmo de tarificación automatizada por minuto ($35 CLP/min).',
-      'Validaciones de formato chileno de patentes (BB-BB-11 / BBBB-11).',
+      'Algoritmo de tarificación automatizada ($35 CLP/min).',
+      'Validaciones de formato chileno de patentes vehiculares.',
       'Trazabilidad y consistencia transaccional end-to-end.'
     ]
   },
   {
     role: 'PAUL FERRADA',
-    title: 'Datos Cloud, DevOps & Azure',
+    title: 'Infraestructura Cloud & DevOps Azure',
     color: C_PURPLE,
     points: [
-      'Aprovisionamiento de VM en Microsoft Azure (Chile Central).',
-      'Endurecimiento de Windows Server 2022 con IIS 10.0.',
+      'Aprovisionamiento de VM en Azure (Chile Central).',
+      'Servidor Web IIS 10.0 sobre Windows Server 2022.',
       'Reglas de seguridad en NSG (Puerto 80 HTTP y 3389 RDP).',
       'Configuración de Azure DNS (puntoalerce) e IP pública.',
-      'Integración y sincronización con Firebase Firestore (nubarda).'
+      'Despliegue estático de producción en C:\\inetpub\\wwwroot.'
+    ]
+  },
+  {
+    role: 'FELIPE LABARCA',
+    title: 'Seguridad, JWT & Persistencia Cloud',
+    color: C_AMBER,
+    points: [
+      'Control de acceso por roles RBAC (Usuario vs Admin).',
+      'Protección criptográfica con Tokens JWT (RFC 7519).',
+      'Integración con base de datos NoSQL Firebase Firestore.',
+      'Sincronización reactiva en tiempo real (onSnapshot).',
+      'Registro de auditoría y trazabilidad de peticiones HTTP.'
     ]
   }
 ];
 
 team.forEach((tm, idx) => {
-  const x = 0.9 + (idx * 3.94);
+  const x = 0.9 + (idx * 2.94);
   slide9.addShape(pptx.ShapeType.roundRect, {
-    x: x, y: 1.95, w: 3.65, h: 4.75, rectRadius: 0.15,
+    x: x, y: 1.95, w: 2.70, h: 4.75, rectRadius: 0.15,
     fill: { color: C_CARD }, line: { color: C_BORDER, width: 1.0 }
   });
 
   // Pill
   slide9.addShape(pptx.ShapeType.roundRect, {
-    x: x + 0.25, y: 2.20, w: 3.15, h: 0.28, rectRadius: 0.14,
+    x: x + 0.20, y: 2.20, w: 2.30, h: 0.28, rectRadius: 0.14,
     fill: { color: '1C1E28' }, line: { color: tm.color, width: 0.8 }
   });
   slide9.addText(tm.role, {
-    x: x + 0.25, y: 2.20, w: 3.15, h: 0.28,
+    x: x + 0.20, y: 2.20, w: 2.30, h: 0.28,
     fontSize: 8.5, fontFace: FONT_PRIMARY, bold: true, color: tm.color,
     align: 'center', valign: 'middle'
   });
 
   // Title
   slide9.addText(tm.title, {
-    x: x + 0.25, y: 2.60, w: 3.15, h: 0.55,
+    x: x + 0.20, y: 2.60, w: 2.30, h: 0.55,
     fontSize: 12, fontFace: FONT_PRIMARY, bold: true, color: C_WHITE,
     valign: 'top'
   });
 
   // Bullet Points
   const textRuns = tm.points.flatMap(p => [
-    { text: `• ${p}\n\n`, options: { color: C_MUTED, fontSize: 9.6 } }
+    { text: `• ${p}\n\n`, options: { color: C_MUTED, fontSize: 9.0 } }
   ]);
 
   slide9.addText(textRuns, {
-    x: x + 0.25, y: 3.25, w: 3.15, h: 3.20,
+    x: x + 0.20, y: 3.25, w: 2.30, h: 3.20,
     fontFace: FONT_PRIMARY, valign: 'top'
   });
 });
 
-slide9.addNotes('MINUTOS 10:00 A 13:00 - Cada integrante (Fabián Mora, Agustín Cañas, Paul Ferrada) expone su rol y demuestra conocimiento transversal de la solución completa para obtener los 5 puntos de participación individual de la rúbrica.');
+slide9.addNotes('MINUTOS 10:00 A 13:00 - Cada integrante (Paul Ferrada, Agustín Cañas, Fabián Mora, Felipe Labarca) expone su rol y demuestra conocimiento transversal de la solución completa para obtener los 5 puntos de participación individual de la rúbrica.');
 
 // ===========================================================================
 // SLIDE 10: CONCLUSIONES & CIERRE
@@ -902,7 +914,7 @@ slide10.addText([
   { text: '• Cumplimiento del 100% de la Rúbrica Oficial:\n', options: { bold: true, color: C_WHITE, fontSize: 11.5 } },
   { text: 'Todos los criterios de evaluación (IaaS Azure, NSG, IIS, DNS público, CRUD en vivo, control de versiones en GitHub y defensa técnica) fueron verificados y documentados rigurosamente.\n\n', options: { color: C_MUTED, fontSize: 10.5 } },
   { text: '• Trabajo Colaborativo en GitHub:\n', options: { bold: true, color: C_WHITE, fontSize: 11.5 } },
-  { text: 'Control de versiones con commits en español, articulando el trabajo de los 3 integrantes de forma ordenada.', options: { color: C_MUTED, fontSize: 10.5 } }
+  { text: 'Control de versiones con commits en español, articulando el trabajo de los 4 integrantes (Paul Ferrada, Agustín Cañas, Fabián Mora, Felipe Labarca) de forma ordenada.', options: { color: C_MUTED, fontSize: 10.5 } }
 ], { x: 1.2, y: 3.10, w: 6.2, h: 3.40, fontFace: FONT_PRIMARY });
 
 // Right Card: Enlaces & Cierre

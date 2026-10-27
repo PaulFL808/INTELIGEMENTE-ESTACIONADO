@@ -354,22 +354,22 @@ export default function ArchitectureDefense() {
         </div>
       </div>
 
-      {/* 5. Roles of 3 Members (Official Team) */}
+      {/* 5. Roles of 4 Members (Official Team) */}
       <div className="game-card p-6 sm:p-8 bg-white dark:bg-[#13141a] space-y-6">
         <div>
           <h3 className="font-display text-2xl font-black text-zinc-950 dark:text-white flex items-center gap-3">
             <Users className="w-6 h-6 text-zinc-500" />
-            ORGANIZACIÓN DEL EQUIPO (3 INTEGRANTES)
+            ORGANIZACIÓN DEL EQUIPO (4 INTEGRANTES)
           </h3>
           <p className="text-sm text-zinc-500 font-sans font-medium mt-1">
-            Distribución técnica de responsabilidades según la Sección 8 de la pauta.
+            Distribución técnica de responsabilidades según la Sección 8 de la pauta de evaluación oficial.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div className="p-6 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 space-y-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="p-5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 space-y-2">
             <span className="font-display font-black text-xs text-blue-500 uppercase">FABIÁN MORA</span>
-            <div className="font-display font-black text-base text-zinc-950 dark:text-white">
+            <div className="font-display font-black text-sm text-zinc-950 dark:text-white">
               Interfaz & Experiencia (UI/UX)
             </div>
             <p className="text-xs font-sans text-zinc-500 font-medium leading-relaxed">
@@ -377,23 +377,33 @@ export default function ArchitectureDefense() {
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 space-y-2">
+          <div className="p-5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 space-y-2">
             <span className="font-display font-black text-xs text-emerald-500 uppercase">AGUSTÍN CAÑAS</span>
-            <div className="font-display font-black text-base text-zinc-950 dark:text-white">
+            <div className="font-display font-black text-sm text-zinc-950 dark:text-white">
               Arquitectura & Lógica de Negocio
             </div>
             <p className="text-xs font-sans text-zinc-500 font-medium leading-relaxed">
-              Definición y documentación de las 4 capas de software, diseño de controladores API REST, motor de reglas de negocio (validación de patentes chilenas, cálculo de tarificación a $35 CLP/min) y trazabilidad del flujo de solicitudes.
+              Modelo Cliente-Servidor Multi-Capa (4 capas desacopladas), controladores de dominio, validación estricta de patentes chilenas y motor de tarificación automatizada a $35 CLP/minuto.
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 space-y-2">
+          <div className="p-5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 space-y-2">
             <span className="font-display font-black text-xs text-purple-500 uppercase">PAUL FERRADA</span>
-            <div className="font-display font-black text-base text-zinc-950 dark:text-white">
-              Datos, Integración & Cloud Azure
+            <div className="font-display font-black text-sm text-zinc-950 dark:text-white">
+              Infraestructura Cloud & Azure
             </div>
             <p className="text-xs font-sans text-zinc-500 font-medium leading-relaxed">
-              Persistencia de datos en la nube con Firebase Firestore (proyecto nubarda), aprovisionamiento de Máquina Virtual Windows Server 2022 en Microsoft Azure, servidor IIS 10.0, reglas NSG y resolución FQDN pública.
+              Aprovisionamiento de VM Windows Server 2022 en Chile Central, configuración de servidor IIS 10.0 en puerto 80, reglas de seguridad en NSG y resolución FQDN pública con Azure DNS.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 space-y-2">
+            <span className="font-display font-black text-xs text-amber-500 uppercase">FELIPE LABARCA</span>
+            <div className="font-display font-black text-sm text-zinc-950 dark:text-white">
+              Seguridad, JWT & Persistencia Cloud
+            </div>
+            <p className="text-xs font-sans text-zinc-500 font-medium leading-relaxed">
+              Sistema de autenticación y roles RBAC (Usuario Normal vs Admin), protección de datos con Tokens criptográficos JWT (RFC 7519), integración de Firebase Firestore y consola de auditoría.
             </p>
           </div>
         </div>

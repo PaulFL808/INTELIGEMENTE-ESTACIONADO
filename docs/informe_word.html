@@ -159,7 +159,7 @@
     <p><strong>Fecha y Hora de Presentación:</strong> Miércoles 28 de octubre a las 09:00 hrs</p>
     <p><strong>Lugar de Exposición:</strong> Auditorio 1, Edificio 91, Tercer Piso (Tenida Semi-Formal)</p>
     <p><strong>Repositorio Oficial GitHub:</strong> https://github.com/PaulFL808/INTELIGEMENTE-ESTACIONADO.git</p>
-    <p><strong>URL Pública del Sitio Desplegado:</strong> http://aurasmartparking.eastus.cloudapp.azure.com</p>
+    <p><strong>URL Pública del Sitio Desplegado:</strong> http://puntoalerce.chilecentral.cloudapp.azure.com</p>
   </div>
 </div>
 
@@ -174,24 +174,24 @@
   </thead>
   <tbody>
     <tr>
-      <td><strong>Integrante 1</strong></td>
+      <td><strong>Fabián Mora</strong></td>
       <td>Interfaz y Experiencia (UI/UX)</td>
       <td>Diseño de interfaz responsive, tipografías Unbounded y Space Grotesk, terminal de reservas, validación de formularios y accesibilidad.</td>
     </tr>
     <tr>
-      <td><strong>Integrante 2</strong></td>
+      <td><strong>Agustín Cañas</strong></td>
       <td>Arquitectura y Lógica de Negocio</td>
       <td>Definición del modelo por capas, controladores de la API REST, motor de reglas de ocupación y operaciones CRUD.</td>
     </tr>
     <tr>
-      <td><strong>Integrante 3</strong></td>
-      <td>Datos e Integración IoT (Hardware)</td>
-      <td>Programación en C++ de Arduino UNO R3, sensores ultrasónicos HC-SR04, servomotores SG90, LCD I2C y puente Web Serial API.</td>
+      <td><strong>Paul Ferrada</strong></td>
+      <td>Infraestructura Cloud y DevOps (Azure)</td>
+      <td>Aprovisionamiento de la VM Windows Server 2022 en Chile Central, configuración del servidor web IIS 10.0 en puerto 80, reglas de seguridad en NSG y Azure DNS.</td>
     </tr>
     <tr>
-      <td><strong>Integrante 4</strong></td>
-      <td>Infraestructura Cloud y Operaciones</td>
-      <td>Aprovisionamiento de la VM en Azure, endurecimiento de seguridad en NSG, instalación y configuración del rol IIS y Azure DNS.</td>
+      <td><strong>Felipe Labarca</strong></td>
+      <td>Seguridad, JWT y Persistencia Cloud</td>
+      <td>Sistema de autenticación y roles RBAC (Usuario Normal vs Admin), protección criptográfica con Tokens JWT (RFC 7519), integración de Firebase Firestore y consola de auditoría.</td>
     </tr>
   </tbody>
 </table>
@@ -215,7 +215,7 @@ Para garantizar el aislamiento de procesos y el control exhaustivo sobre el serv
 <ul>
   <li><strong>Nombre del Recurso:</strong> <code>vm-aurasmartparking-prod</code></li>
   <li><strong>Grupo de Recursos (Resource Group):</strong> <code>rg-smartparking-ipst</code></li>
-  <li><strong>Región Cloud:</strong> <code>East US 2</code> (Estados Unidos Oriental 2)</li>
+  <li><strong>Región Cloud:</strong> <code>Chile Central</code> (Santiago de Chile)</li>
   <li><strong>Sistema Operativo:</strong> Windows Server 2022 Datacenter: Azure Edition - Gen2 (x64)</li>
   <li><strong>Tamaño de Instancia (SKU):</strong> <code>Standard_B2s</code> (2 vCPUs virtuales, 4 GiB de memoria RAM, hasta 3200 IOPS de rendimiento en disco)</li>
   <li><strong>Almacenamiento del SO:</strong> Disco SSD Premium de 128 GiB administrado por Azure con cifrado en reposo (PMK)</li>
@@ -238,7 +238,7 @@ La conectividad se estructuró a través de una Red Virtual (VNet) dedicada, mie
   <li><strong>Red Virtual (VNet):</strong> <code>vnet-smartparking</code> (Segmento <code>10.0.0.0/16</code>)</li>
   <li><strong>Subred de Trabajo:</strong> <code>snet-web</code> (Segmento <code>10.0.0.0/24</code>)</li>
   <li><strong>Dirección IP Privada:</strong> <code>10.0.0.4</code> (Asignación dinámica persistente)</li>
-  <li><strong>Dirección IP Pública (IPv4):</strong> <code>20.124.68.142</code> (SKU Estándar de Azure)</li>
+  <li><strong>Dirección IP Pública (IPv4):</strong> <code>68.211.136.184</code> (SKU Estándar de Azure)</li>
   <li><strong>Grupo de Seguridad de Red:</strong> <code>nsg-smartparking-prod</code></li>
 </ul>
 
@@ -317,7 +317,7 @@ La conectividad se estructuró a través de una Red Virtual (VNet) dedicada, mie
 <p>
 El acceso al entorno de administración se realizó mediante el cliente nativo de Escritorio Remoto de Windows:
 </p>
-<pre>mstsc /v:20.124.68.142:3389</pre>
+<pre>mstsc /v:68.211.136.184:3389</pre>
 <p>
 Iniciando sesión con la cuenta de administrador aprovisionada en Azure.
 </p>
@@ -336,7 +336,7 @@ Posteriormente, se verificó el arranque automático del servicio mediante:
 <ol>
   <li><strong>Ruta Física:</strong> Se desplegó la aplicación en el directorio <code>C:\inetpub\wwwroot\smart-parking</code>, conteniendo la compilación optimizada del frontend de React y el backend Express.</li>
   <li><strong>URL Rewrite y Application Request Routing (ARR):</strong> Se instalaron los módulos oficiales de IIS para enrutar las peticiones web de la SPA y redirigir las solicitudes a <code>/api/*</code> hacia el servicio interno de Node.js en el puerto 3001.</li>
-  <li><strong>Bindings (Enlaces):</strong> Configurado para escuchar en el puerto HTTP 80 para todas las IPs no asignadas bajo el nombre de host <code>aurasmartparking.eastus.cloudapp.azure.com</code>.</li>
+  <li><strong>Bindings (Enlaces):</strong> Configurado para escuchar en el puerto HTTP 80 para todas las IPs no asignadas bajo el nombre de host <code>puntoalerce.chilecentral.cloudapp.azure.com</code>.</li>
 </ol>
 
 <div class="figura-box">
@@ -351,10 +351,10 @@ Para dotar al MVP de un identificador mnemotécnico formal y evitar el uso direc
 
 <h3>5.1 Parámetros de Dominio FQDN</h3>
 <ul>
-  <li><strong>Etiqueta de Dominio:</strong> <code>aurasmartparking</code></li>
-  <li><strong>Sufijo de Región Azure:</strong> <code>.eastus.cloudapp.azure.com</code></li>
-  <li><strong>Nombre de Dominio FQDN Completo:</strong> <code>aurasmartparking.eastus.cloudapp.azure.com</code></li>
-  <li><strong>Resolución hacia IP:</strong> <code>20.124.68.142</code></li>
+  <li><strong>Etiqueta de Dominio:</strong> <code>puntoalerce</code></li>
+  <li><strong>Sufijo de Región Azure:</strong> <code>.chilecentral.cloudapp.azure.com</code></li>
+  <li><strong>Nombre de Dominio FQDN Completo:</strong> <code>puntoalerce.chilecentral.cloudapp.azure.com</code></li>
+  <li><strong>Resolución hacia IP:</strong> <code>68.211.136.184</code></li>
 </ul>
 
 <h3>5.2 Comprobación de Resolución desde Equipo Externo</h3>
@@ -362,13 +362,13 @@ Para dotar al MVP de un identificador mnemotécnico formal y evitar el uso direc
 Se ejecutaron los comandos de diagnóstico <code>nslookup</code> y <code>ping</code> desde un ordenador externo fuera de la red de Azure:
 </p>
 <pre>
-C:\> nslookup aurasmartparking.eastus.cloudapp.azure.com
+C:\> nslookup puntoalerce.chilecentral.cloudapp.azure.com
 Servidor:  dns.google
 Address:   8.8.8.8
 
 Respuesta no autoritativa:
-Nombre:    aurasmartparking.eastus.cloudapp.azure.com
-Address:   20.124.68.142
+Nombre:    puntoalerce.chilecentral.cloudapp.azure.com
+Address:   68.211.136.184
 </pre>
 
 <div class="figura-box">
@@ -383,13 +383,13 @@ Address:   20.124.68.142
 El Producto Mínimo Viable fue probado accediendo desde navegadores web externos (Google Chrome, Microsoft Edge y navegadores móviles), validando que la aplicación carga sin errores, con tiempos de respuesta de 180 ms y plena interactividad.
 </p>
 <ul>
-  <li><strong>URL Pública de Demostración:</strong> <a href="http://aurasmartparking.eastus.cloudapp.azure.com">http://aurasmartparking.eastus.cloudapp.azure.com</a></li>
+  <li><strong>URL Pública de Demostración:</strong> <a href="http://puntoalerce.chilecentral.cloudapp.azure.com">http://puntoalerce.chilecentral.cloudapp.azure.com</a></li>
   <li><strong>Diseño y Experiencia:</strong> Interfaz moderna con fuentes cuadradas y anchas (<em>Unbounded</em> y <em>Space Grotesk</em>), visualizador 3D de maqueta y marcadores de estado gigantes.</li>
   <li><strong>Modo Oscuro / Claro:</strong> Sincronización instantánea de tema visual mediante CSS tokens.</li>
 </ul>
 
 <div class="figura-box">
-  [PEGAR AQUÍ CAPTURA 5: Navegador web externo accediendo a http://aurasmartparking.eastus.cloudapp.azure.com mostrando el sitio activo]
+  [PEGAR AQUÍ CAPTURA 5: Navegador web externo accediendo a http://puntoalerce.chilecentral.cloudapp.azure.com mostrando el sitio activo]
 </div>
 <span class="figura-desc">Figura 5: Pantalla principal de AURA Smart Parking cargada desde un equipo externo a través de Internet Information Services (IIS).</span>
 

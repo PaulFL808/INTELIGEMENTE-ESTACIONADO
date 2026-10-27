@@ -17,10 +17,10 @@
 
 | Integrante | Rol Principal | Responsabilidad Técnica |
 |---|---|---|
-| **Integrante 1** | Interfaz & Experiencia (UI/UX) | Diseño responsive, componentes en React, accesibilidad y validaciones. |
-| **Integrante 2** | Arquitectura & Lógica de Negocio | Definición de capas, controladores API REST y operaciones CRUD. |
-| **Integrante 3** | Datos e Integración IoT (Hardware) | Microcontrolador Arduino UNO, sensores HC-SR04, servos y enlace serial. |
-| **Integrante 4** | Infraestructura Cloud & Operaciones | Configuración de VM Azure, Windows Server 2022, IIS, DNS y NSG. |
+| **Fabián Mora** | Interfaz & Experiencia (UI/UX) | Desarrollo de SPA en React 18, Vite y Tailwind CSS, mapa 3D de 6 cupos y terminal de reservas con Pase QR. |
+| **Agustín Cañas** | Arquitectura & Lógica de Negocio | Modelo Cliente-Servidor Multi-Capa (4 capas), controladores de dominio, validación de patentes chilenas y tarificación ($35 CLP/min). |
+| **Paul Ferrada** | Infraestructura Cloud & Azure | Aprovisionamiento de VM Windows Server 2022 en Chile Central, servidor IIS 10.0, reglas NSG y DNS FQDN público. |
+| **Felipe Labarca** | Seguridad, JWT & Persistencia Cloud | Sistema de autenticación RBAC (Usuario vs Admin), protección con Tokens JWT (RFC 7519), integración de Firestore y consola de auditoría. |
 
 ---
 
@@ -48,10 +48,13 @@ Para el despliegue del MVP se seleccionó una arquitectura basada en Infraestruc
 ### 2.1 Especificaciones Técnicas del Recurso
 * **Nombre de la Máquina Virtual:** `vm-aurasmartparking-prod`
 * **Grupo de Recursos (Resource Group):** `rg-smartparking-ipst`
-* **Región Cloud:** `East US 2` (costo optimizado y baja latencia hacia Chile)
+* **Región Cloud:** `Chile Central` (latencia ultrabaja hacia redes locales)
 * **Sistema Operativo:** Windows Server 2022 Datacenter: Azure Edition - Gen2 (x64)
 * **Tamaño de Instancia:** `Standard_B2s` (2 vCPUs virtuales, 4 GiB de memoria RAM, hasta 3200 IOPS)
 * **Almacenamiento del SO:** Disco SSD Premium de 128 GiB administrado por Azure
+* **Dirección IP Pública:** `68.211.136.184` (Estática)
+* **FQDN Oficial Azure DNS:** `puntoalerce.chilecentral.cloudapp.azure.com`
+* **Servidor Web:** Internet Information Services (IIS 10.0) en puerto 80 (HTTP)
 * **Zona de Disponibilidad:** Zona 1 (SLA 99.99%)
 
 ```
@@ -62,15 +65,16 @@ Para el despliegue del MVP se seleccionó una arquitectura basada en Infraestruc
 |    |-- CPU: 2 vCPUs (Intel Xeon Platinum 8272CL / AMD EPYC 7763v)       |
 |    |-- RAM: 4 GiB                                                       |
 |    |-- SO: Windows Server 2022 Datacenter                               |
-|    |-- Disco: 128 GiB SSD Premium OS Disk                               |
-|    +-- Interfaz de Red: nic-smartparking-prod (IP Privada: 10.0.0.4)    |
+|    |-- Servidor Web: IIS 10.0 (C:\inetpub\wwwroot)                     |
+|    |-- IP Pública: 68.211.136.184 (Chile Central)                       |
+|    +-- FQDN: puntoalerce.chilecentral.cloudapp.azure.com                |
 +-------------------------------------------------------------------------+
 ```
 
 ```
 [FIGURA 1: Captura de pantalla de la hoja de información general de la Máquina Virtual en el Portal de Azure, evidenciando el estado 'En ejecución', tamaño Standard_B2s, sistema operativo y suscripción activa]
 ```
-*Descripción técnica Fig. 1: Panel principal de Microsoft Azure donde se comprueba el aprovisionamiento exitoso de la máquina virtual `vm-aurasmartparking-prod` en la región East US 2 con métricas de salud operativas.*
+*Descripción técnica Fig. 1: Panel principal de Microsoft Azure donde se comprueba el aprovisionamiento exitoso de la máquina virtual `vm-aurasmartparking-prod` en la región Chile Central con métricas de salud operativas.*
 
 ---
 

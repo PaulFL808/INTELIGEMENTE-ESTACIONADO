@@ -1,6 +1,6 @@
-$htmlPath = "C:\Users\fngg7\Desktop\ultrapp\informe_word.html"
-$docxPath1 = "C:\Users\fngg7\Desktop\ultrapp\Informe_Tecnico_Azure_IIS_MVP.docx"
-$docxPath2 = "C:\Users\fngg7\Desktop\ultrapp\smart-parking\Informe_Tecnico_Azure_IIS_MVP.docx"
+$htmlPath = "C:\Users\fngg7\Desktop\INTELIGEMENTE-ESTACIONADO\docs\informe_word.html"
+$docxPath1 = "C:\Users\fngg7\Desktop\INTELIGEMENTE-ESTACIONADO\Informe_Tecnico_Azure_IIS_MVP.docx"
+$docxPath2 = "C:\Users\fngg7\Desktop\Informe_Tecnico_Azure_IIS_MVP.docx"
 
 try {
     Write-Host "Iniciando Microsoft Word COM..."

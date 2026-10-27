@@ -87,14 +87,14 @@ $$\text{Distancia} = \frac{\text{Tiempo Eco} \times 0.0343}{2}$$
 
 ## 6. Organización del Equipo (4 Integrantes)
 
-1. **Integrante 1 — Interfaz y Experiencia de Usuario (UI/UX):**  
-   *Responsabilidad:* Diseño estético minimalista tipo Apple/Farfetch, componentes interactivos en React, terminal de reservas, accesibilidad y maquetación responsive.
-2. **Integrante 2 — Arquitectura de Software y Lógica de Negocio:**  
-   *Responsabilidad:* Definición de capas, controladores API REST, motor de reglas de ocupación y tarificación en CLP, y trazabilidad end-to-end de solicitudes.
-3. **Integrante 3 — Datos e Integración IoT (Hardware):**  
-   *Responsabilidad:* Programación en C++ de Arduino UNO R3 (`smart_parking_uno.ino`), calibración de los 8 sensores HC-SR04, servos SG90, LCD I2C y puente Web Serial API.
-4. **Integrante 4 — Despliegue y Operación en Azure Cloud:**  
-   *Responsabilidad:* Configuración de recursos en el portal de Azure, publicación en Azure App Service / Static Web Apps, variables de entorno, seguridad y monitoreo con Application Insights.
+1. **Fabián Mora — Interfaz y Experiencia de Usuario (UI/UX):**  
+   *Responsabilidad:* Diseño responsive en React 18, Vite y Tailwind CSS, mapa interactivo 3D de 6 plazas, animaciones vehiculares y terminal de reservas con emisión de Pase Digital QR.
+2. **Agustín Cañas — Arquitectura de Software y Lógica de Negocio:**  
+   *Responsabilidad:* Modelo Cliente-Servidor Multi-Capa (4 capas desacopladas), controladores de dominio, validación estricta de patentes chilenas y motor de tarificación automatizada a $35 CLP/minuto.
+3. **Paul Ferrada — Infraestructura Cloud & DevOps (Microsoft Azure):**  
+   *Responsabilidad:* Aprovisionamiento de Máquina Virtual Windows Server 2022 en Chile Central, servidor IIS 10.0 en puerto 80, reglas de seguridad NSG y resolución FQDN pública con Azure DNS (`puntoalerce.chilecentral.cloudapp.azure.com`).
+4. **Felipe Labarca — Seguridad, Autenticación (JWT) & Persistencia Cloud:**  
+   *Responsabilidad:* Sistema de autenticación y roles RBAC (Usuario Normal vs Admin), protección criptográfica con Tokens JWT (RFC 7519), integración de base de datos NoSQL con Firebase Firestore (`nubarda`) y consola de auditoría.
 
 ---
 
