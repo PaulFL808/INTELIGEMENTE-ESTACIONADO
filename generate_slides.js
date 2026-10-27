@@ -123,12 +123,12 @@ const coverCards = [
   {
     pill: 'EQUIPO TÉCNICO',
     pillColor: C_GREEN,
-    title: '4 Integrantes Clave',
+    title: '3 Integrantes',
     lines: [
-      { b: 'Integrante 1: ', t: 'Interfaz & UX (React 18)' },
-      { b: 'Integrante 2: ', t: 'Arquitectura & API REST' },
-      { b: 'Integrante 3: ', t: 'Hardware & IoT (Arduino)' },
-      { b: 'Integrante 4: ', t: 'Cloud & DevOps (Azure)' }
+      { b: 'Fabián Mora: ', t: 'Interfaz & UX (React 18)' },
+      { b: 'Agustín Cañas: ', t: 'Arquitectura & Lógica' },
+      { b: 'Paul Ferrada: ', t: 'Cloud & Datos (Azure)' },
+      { b: 'Institución: ', t: 'IP Santo Tomás' }
     ]
   },
   {
@@ -137,8 +137,8 @@ const coverCards = [
     title: 'Recursos en Vivo',
     lines: [
       { b: 'GitHub: ', t: 'github.com/PaulFL808/...' },
-      { b: 'Cloud Azure: ', t: 'aurasmartparking.eastus...' },
-      { b: 'Windows Server: ', t: 'IIS 10.0 + ARR Proxy' },
+      { b: 'Cloud Azure: ', t: 'puntoalerce.chilecentral...' },
+      { b: 'Windows Server: ', t: 'IIS 10.0 + Web Static' },
       { b: 'Rúbrica: ', t: '100% Criterios Cubiertos' }
     ]
   }
@@ -190,7 +190,7 @@ slide1.addText('01 / 10  ·  Minuto 0:00 - 2:00', {
   fontSize: 8.5, fontFace: FONT_PRIMARY, color: C_DIM, align: 'right', valign: 'bottom'
 });
 
-slide1.addNotes('MINUTO 0:00 - Saludo inicial a la comisión evaluadora de Santo Tomás. Presentación del equipo de 4 integrantes y declaración de objetivos del proyecto AURA Smart Parking, articulando Arquitectura de Sistemas y Programación en la Nube.');
+slide1.addNotes('MINUTO 0:00 - Saludo inicial a la comisión evaluadora de Santo Tomás. Presentación del equipo de 3 integrantes (Fabián Mora, Agustín Cañas, Paul Ferrada) y declaración de objetivos del proyecto AURA Smart Parking, articulando Arquitectura de Sistemas y Programación en la Nube.');
 
 // ===========================================================================
 // SLIDE 2: PROBLEMA & OBJETIVO
@@ -656,9 +656,9 @@ const azureSpecs = [
     pillColor: C_PURPLE,
     title: 'Resolución Pública & Acceso E2E',
     specs: [
-      { k: 'FQDN Oficial: ', v: 'aurasmartparking.eastus.cloudapp.azure.com' },
-      { k: 'Dirección IP Pública: ', v: '20.124.68.142 (Estática asignada)' },
-      { k: 'Latencia Comprobada: ', v: '180 ms desde redes externas en Chile' },
+      { k: 'FQDN Oficial: ', v: 'puntoalerce.chilecentral.cloudapp.azure.com' },
+      { k: 'Dirección IP Pública: ', v: '68.211.136.184 (Chile Central)' },
+      { k: 'Latencia Comprobada: ', v: '< 50 ms desde redes locales en Chile' },
       { k: 'Verificación: ', v: 'Auditoría exitosa sin VPN ni credenciales' },
       { k: 'Disponibilidad: ', v: 'Publicación web 24/7 en alta disponibilidad' }
     ]
@@ -792,7 +792,7 @@ addSlideHeader(slide9, '08 · Equipo de Trabajo', 'Organización del Equipo & Ro
 
 const team = [
   {
-    role: 'INTEGRANTE 1',
+    role: 'FABIÁN MORA',
     title: 'Interfaz & Experiencia (UI/UX)',
     color: C_BLUE,
     points: [
@@ -804,80 +804,68 @@ const team = [
     ]
   },
   {
-    role: 'INTEGRANTE 2',
-    title: 'Arquitectura & Backend',
+    role: 'AGUSTÍN CAÑAS',
+    title: 'Arquitectura & Lógica de Negocio',
     color: C_GREEN,
     points: [
-      'Definición del modelo desacoplado en 4 capas.',
-      'Controladores RESTful en Node.js y Express.',
-      'Motor de reglas de negocio y tarificación ($35/min).',
-      'Orquestación de operaciones CRUD e integridad de datos.',
-      'Manejo de excepciones HTTP y auditoría en consola.'
+      'Definición del modelo desacoplado en 4 capas de software.',
+      'Orquestación de estados: Disponible, Reservado y Ocupado.',
+      'Algoritmo de tarificación automatizada por minuto ($35 CLP/min).',
+      'Validaciones de formato chileno de patentes (BB-BB-11 / BBBB-11).',
+      'Trazabilidad y consistencia transaccional end-to-end.'
     ]
   },
   {
-    role: 'INTEGRANTE 3',
-    title: 'Hardware & IoT (Firmware)',
-    color: C_AMBER,
-    points: [
-      'Programación C++ embebida en Arduino UNO R3.',
-      'Matriz de 8 sensores ultrasónicos HC-SR04.',
-      'Técnica de disparo compartido en Pin 2 Trigger.',
-      'Control de 2 servomotores SG90 y display LCD 16x2.',
-      'Enlace bidireccional Web Serial API a 115200 baudios.'
-    ]
-  },
-  {
-    role: 'INTEGRANTE 4',
-    title: 'Cloud & DevOps (Azure)',
+    role: 'PAUL FERRADA',
+    title: 'Datos Cloud, DevOps & Azure',
     color: C_PURPLE,
     points: [
-      'Aprovisionamiento de VM en Microsoft Azure.',
-      'Endurecimiento de Windows Server 2022 Datacenter.',
-      'Instalación y configuración de IIS con ARR Proxy.',
-      'Reglas de firewall en NSG (Puertos 80, 443, 3001, 3389).',
-      'Configuración de Azure DNS (FQDN) y validación externa.'
+      'Aprovisionamiento de VM en Microsoft Azure (Chile Central).',
+      'Endurecimiento de Windows Server 2022 con IIS 10.0.',
+      'Reglas de seguridad en NSG (Puerto 80 HTTP y 3389 RDP).',
+      'Configuración de Azure DNS (puntoalerce) e IP pública.',
+      'Integración y sincronización con Firebase Firestore (nubarda).'
     ]
   }
 ];
 
 team.forEach((tm, idx) => {
-  const x = 0.9 + (idx * 2.94);
+  const x = 0.9 + (idx * 3.94);
   slide9.addShape(pptx.ShapeType.roundRect, {
-    x: x, y: 1.95, w: 2.70, h: 4.75, rectRadius: 0.15,
+    x: x, y: 1.95, w: 3.65, h: 4.75, rectRadius: 0.15,
     fill: { color: C_CARD }, line: { color: C_BORDER, width: 1.0 }
   });
 
   // Pill
   slide9.addShape(pptx.ShapeType.roundRect, {
-    x: x + 0.20, y: 2.20, w: 2.30, h: 0.28, rectRadius: 0.14,
+    x: x + 0.25, y: 2.20, w: 3.15, h: 0.28, rectRadius: 0.14,
     fill: { color: '1C1E28' }, line: { color: tm.color, width: 0.8 }
   });
   slide9.addText(tm.role, {
-    x: x + 0.20, y: 2.20, w: 2.30, h: 0.28,
+    x: x + 0.25, y: 2.20, w: 3.15, h: 0.28,
     fontSize: 8.5, fontFace: FONT_PRIMARY, bold: true, color: tm.color,
     align: 'center', valign: 'middle'
   });
 
   // Title
   slide9.addText(tm.title, {
-    x: x + 0.20, y: 2.60, w: 2.30, h: 0.55,
+    x: x + 0.25, y: 2.60, w: 3.15, h: 0.55,
     fontSize: 12, fontFace: FONT_PRIMARY, bold: true, color: C_WHITE,
     valign: 'top'
   });
 
   // Bullet Points
   const textRuns = tm.points.flatMap(p => [
-    { text: `• ${p}\n\n`, options: { color: C_MUTED, fontSize: 9.2 } }
+    { text: `• ${p}\n\n`, options: { color: C_MUTED, fontSize: 9.6 } }
   ]);
 
   slide9.addText(textRuns, {
-    x: x + 0.20, y: 3.25, w: 2.30, h: 3.20,
+    x: x + 0.25, y: 3.25, w: 3.15, h: 3.20,
     fontFace: FONT_PRIMARY, valign: 'top'
   });
 });
 
-slide9.addNotes('MINUTOS 10:00 A 13:00 - Cada integrante expone su rol y demuestra conocimiento transversal de la solución completa para obtener los 5 puntos de participación individual de la rúbrica.');
+slide9.addNotes('MINUTOS 10:00 A 13:00 - Cada integrante (Fabián Mora, Agustín Cañas, Paul Ferrada) expone su rol y demuestra conocimiento transversal de la solución completa para obtener los 5 puntos de participación individual de la rúbrica.');
 
 // ===========================================================================
 // SLIDE 10: CONCLUSIONES & CIERRE
@@ -914,7 +902,7 @@ slide10.addText([
   { text: '• Cumplimiento del 100% de la Rúbrica Oficial:\n', options: { bold: true, color: C_WHITE, fontSize: 11.5 } },
   { text: 'Todos los criterios de evaluación (IaaS Azure, NSG, IIS, DNS público, CRUD en vivo, control de versiones en GitHub y defensa técnica) fueron verificados y documentados rigurosamente.\n\n', options: { color: C_MUTED, fontSize: 10.5 } },
   { text: '• Trabajo Colaborativo en GitHub:\n', options: { bold: true, color: C_WHITE, fontSize: 11.5 } },
-  { text: 'Control de versiones con commits en español, articulando el trabajo de los 4 integrantes de forma ordenada.', options: { color: C_MUTED, fontSize: 10.5 } }
+  { text: 'Control de versiones con commits en español, articulando el trabajo de los 3 integrantes de forma ordenada.', options: { color: C_MUTED, fontSize: 10.5 } }
 ], { x: 1.2, y: 3.10, w: 6.2, h: 3.40, fontFace: FONT_PRIMARY });
 
 // Right Card: Enlaces & Cierre
@@ -942,7 +930,7 @@ slide10.addText([
   { text: '• Repositorio Oficial en GitHub:\n', options: { bold: true, color: C_WHITE, fontSize: 11 } },
   { text: 'https://github.com/PaulFL808/INTELIGEMENTE-ESTACIONADO\n\n', options: { color: C_BLUE, fontSize: 9.8 } },
   { text: '• Portal Web Desplegado en Azure:\n', options: { bold: true, color: C_WHITE, fontSize: 11 } },
-  { text: 'http://aurasmartparking.eastus.cloudapp.azure.com\n\n', options: { color: C_GREEN, fontSize: 9.8 } },
+  { text: 'http://puntoalerce.chilecentral.cloudapp.azure.com\n\n', options: { color: C_GREEN, fontSize: 9.8 } },
   { text: '• Defensa en Auditorio:\n', options: { bold: true, color: C_WHITE, fontSize: 11 } },
   { text: 'Miércoles 28 de octubre · 09:00 hrs\nAuditorio 1, Edificio 91, Piso 3\nTenida Semi-Formal\n\n', options: { color: C_MUTED, fontSize: 10 } }
 ], { x: 8.24, y: 3.10, w: 3.89, h: 2.20, fontFace: FONT_PRIMARY });

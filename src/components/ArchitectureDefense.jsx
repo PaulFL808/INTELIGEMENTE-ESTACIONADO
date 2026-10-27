@@ -14,8 +14,7 @@ import {
   Code2, 
   TrendingUp,
   Globe,
-  Lock,
-  GitBranch
+  Lock
 } from 'lucide-react';
 
 export default function ArchitectureDefense() {
@@ -46,13 +45,13 @@ export default function ArchitectureDefense() {
       <div className="game-card p-6 sm:p-8 bg-white dark:bg-[#13141a] flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <span className="text-xs font-display font-black tracking-wider uppercase text-emerald-600 dark:text-emerald-400">
-            DEFENSA TÉCNICA · PAUTA DE EVALUACIÓN OFICIAL (IPST)
+            DEFENSA TÉCNICA · PAUTA DE EVALUACIÓN OFICIAL (SANTO TOMÁS)
           </span>
           <h2 className="text-3xl sm:text-4xl font-display font-black text-zinc-950 dark:text-white mt-1">
             ARQUITECTURA DE SISTEMAS & AZURE IIS
           </h2>
           <p className="text-base text-zinc-600 dark:text-zinc-400 font-sans font-medium mt-1 max-w-2xl">
-            Trazabilidad en tiempo real, desglose de 4 capas y verificación de infraestructura en Windows Server 2022 con IIS.
+            Trazabilidad en tiempo real, desglose de capas de software y verificación de infraestructura en Windows Server 2022 con IIS y Firebase Firestore.
           </p>
         </div>
 
@@ -83,7 +82,7 @@ export default function ArchitectureDefense() {
               <div>• <strong>SO:</strong> Windows Server 2022</div>
               <div>• <strong>Cómputo:</strong> 2 vCPUs · 4 GiB RAM</div>
               <div>• <strong>Disco:</strong> SSD Premium 128 GiB</div>
-              <div>• <strong>Región:</strong> East US 2 (SLA 99.99%)</div>
+              <div>• <strong>Región:</strong> Chile Central (Baja latencia)</div>
             </div>
           </div>
 
@@ -98,9 +97,9 @@ export default function ArchitectureDefense() {
             </h4>
             <div className="space-y-1 text-xs text-zinc-600 dark:text-zinc-400 font-sans">
               <div>• <strong>Rol:</strong> Web-Server (IIS Core)</div>
-              <div>• <strong>Reverse Proxy:</strong> ARR + Rewrite</div>
-              <div>• <strong>Puerto Destino:</strong> Node.js :3001</div>
+              <div>• <strong>Hosting:</strong> C:\inetpub\wwwroot</div>
               <div>• <strong>Worker Process:</strong> W3C Logging</div>
+              <div>• <strong>Disponibilidad:</strong> 24/7 en producción</div>
             </div>
           </div>
 
@@ -114,7 +113,7 @@ export default function ArchitectureDefense() {
               Azure NSG Filtrado
             </h4>
             <div className="space-y-1 text-xs text-zinc-600 dark:text-zinc-400 font-sans">
-              <div>• <strong>Puerto 80:</strong> HTTP Público</div>
+              <div>• <strong>Puerto 80:</strong> HTTP Público Activo</div>
               <div>• <strong>Puerto 443:</strong> HTTPS Seguro</div>
               <div>• <strong>Puerto 3001:</strong> REST API</div>
               <div>• <strong>Puerto 3389:</strong> RDP Restringido</div>
@@ -131,10 +130,10 @@ export default function ArchitectureDefense() {
               Azure DNS (FQDN)
             </h4>
             <div className="space-y-1 text-xs text-zinc-600 dark:text-zinc-400 font-sans">
-              <div>• <strong>IP Pública:</strong> 20.124.68.142</div>
-              <div>• <strong>Dominio:</strong> aurasmartparking...</div>
+              <div>• <strong>IP Pública:</strong> 68.211.136.184</div>
+              <div>• <strong>Dominio:</strong> puntoalerce.chilecentral...</div>
               <div>• <strong>Latencia Externa:</strong> 180 ms</div>
-              <div>• <strong>Auditoría:</strong> Comprobada sin VPN</div>
+              <div>• <strong>Auditoría:</strong> Comprobada (HTTP 200 OK)</div>
             </div>
           </div>
         </div>
@@ -195,29 +194,29 @@ export default function ArchitectureDefense() {
             {
               step: 2,
               title: '2. Servidor Web IIS',
-              desc: selectedFlowType === 'reservation' ? 'Reverse Proxy ARR redirige a /api/parking/reserve.' : 'IIS enruta DELETE /api/parking/release.',
-              tech: 'IIS 10.0 + URL Rewrite',
+              desc: selectedFlowType === 'reservation' ? 'IIS sirve assets y enruta petición REST.' : 'IIS procesa liberación del cupo.',
+              tech: 'Windows Server 2022 IIS',
               icon: Server,
             },
             {
               step: 3,
               title: '3. Reglas de Dominio',
               desc: selectedFlowType === 'reservation' ? 'Valida formato de patente y disponibilidad.' : 'Calcula minutos de estancia y tarifa ($35/min).',
-              tech: 'Node.js Express Controller',
+              tech: 'Lógica de Dominio JS',
               icon: Code2,
             },
             {
               step: 4,
-              title: '4. Persistencia',
-              desc: selectedFlowType === 'reservation' ? 'Bloquea cupo, genera QR y registra evento.' : 'Libera estado de cupo a Disponible.',
-              tech: 'Azure Data Store / Logs',
+              title: '4. Persistencia Cloud',
+              desc: selectedFlowType === 'reservation' ? 'Guarda reserva en Firestore y emite QR.' : 'Actualiza estado a Disponible en Firestore.',
+              tech: 'Firebase Firestore (nubarda)',
               icon: Database,
             },
             {
               step: 5,
-              title: '5. Respuesta HTTP',
-              desc: selectedFlowType === 'reservation' ? 'Retorna 201 Created y emite Pase Digital.' : 'Retorna 200 OK y comprobante de pago.',
-              tech: 'JSON Payload (~200 B)',
+              title: '5. Sincronización',
+              desc: selectedFlowType === 'reservation' ? 'Emite Pase Digital y actualiza mapa en vivo.' : 'Emite comprobante y libera el espacio.',
+              tech: 'Realtime Listener (onSnapshot)',
               icon: CheckCircle2,
             },
           ].map((item) => {
@@ -286,37 +285,37 @@ export default function ArchitectureDefense() {
 
           <div className="p-6 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 space-y-2">
             <span className="font-display font-black text-xs uppercase text-emerald-600 dark:text-emerald-400">
-              CAPA 2: SERVIDOR WEB & REVERSE PROXY
+              CAPA 2: SERVIDOR WEB & HOSTING CLOUD
             </span>
             <h4 className="font-display text-lg font-black text-zinc-950 dark:text-white">
-              Internet Information Services (IIS 10.0)
+              Internet Information Services (IIS 10.0) en Azure
             </h4>
             <p className="text-sm font-sans font-medium text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              Módulo Application Request Routing (ARR) y URL Rewrite actuando como proxy inverso. Gestiona peticiones entrantes por puertos 80 y 443 hacia la API REST en puerto 3001 con reciclado automático de Worker Process.
+              Servidor web en Windows Server 2022 sirviendo la aplicación de producción en el puerto 80 con resolución DNS FQDN y baja latencia hacia usuarios en Chile.
             </p>
           </div>
 
           <div className="p-6 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 space-y-2">
             <span className="font-display font-black text-xs uppercase text-amber-600 dark:text-amber-400">
-              CAPA 3: LÓGICA DE NEGOCIO & CONTROLADORES REST
+              CAPA 3: LÓGICA DE NEGOCIO & CONTROLADORES CRUD
             </span>
             <h4 className="font-display text-lg font-black text-zinc-950 dark:text-white">
-              Node.js Express · Motor de Reglas
+              Servicios de Negocio · Motor de Reglas
             </h4>
             <p className="text-sm font-sans font-medium text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              Endpoints desacoplados para el ciclo CRUD completo (/reserve, /release, /slots, /state). Validación rigurosa de patentes, cálculo de cobro en pesos chilenos ($35 CLP/minuto) y sanitización de datos.
+              Módulos desacoplados para el ciclo CRUD completo (Create, Read, Update, Delete). Validación rigurosa de patentes, cálculo de cobro en pesos chilenos ($35 CLP/minuto) y sanitización de datos.
             </p>
           </div>
 
           <div className="p-6 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 space-y-2">
             <span className="font-display font-black text-xs uppercase text-purple-600 dark:text-purple-400">
-              CAPA 4: PERSISTENCIA & DATOS TRANSACCIONALES
+              CAPA 4: PERSISTENCIA CLOUD EN TIEMPO REAL
             </span>
             <h4 className="font-display text-lg font-black text-zinc-950 dark:text-white">
-              Almacenamiento Transaccional & Logs W3C
+              Google Cloud / Firebase Firestore (nubarda)
             </h4>
             <p className="text-sm font-sans font-medium text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              Repositorio de persistencia en disco SSD Premium de Azure y archivo de logs estructurados W3C para auditoría técnica de eventos vehiculares y facturación.
+              Base de datos NoSQL con sincronización en tiempo real vía WebSockets (onSnapshot). Colecciones: <code>parking_slots</code>, <code>reservations</code> y <code>audit_logs</code>.
             </p>
           </div>
         </div>
@@ -340,7 +339,7 @@ export default function ArchitectureDefense() {
               ¿Por qué eligieron una arquitectura API desacoplada frente a un monolito MVC?
             </h4>
             <p className="text-sm font-sans text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              En un monolito tradicional (MVC), cada consulta de disponibilidad obligaría a renderizar páginas HTML completas en el servidor, sobrecargando la CPU innecesariamente. La API REST desacoplada intercambia payloads JSON mínimos (~200 bytes), permitiendo que múltiples clientes (web, móvil, tótems) consuman la misma fuente de datos con latencia mínima y máxima velocidad.
+              En un monolito tradicional (MVC), cada consulta de disponibilidad obligaría a renderizar páginas HTML completas en el servidor, sobrecargando la CPU innecesariamente. La arquitectura desacoplada con SPA intercambia payloads JSON mínimos (~200 bytes) y sincroniza con Firestore en tiempo real, permitiendo que múltiples clientes consuman la misma fuente de datos con latencia mínima y máxima velocidad.
             </p>
           </div>
 
@@ -349,62 +348,52 @@ export default function ArchitectureDefense() {
               ¿Qué cambiaría en la arquitectura si la demanda pasa de 100 a 10.000 usuarios?
             </h4>
             <p className="text-sm font-sans text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              En Azure escalaríamos horizontalmente mediante <strong>Virtual Machine Scale Sets (VMSS)</strong> con balanceador de carga automático ante CPU &gt; 70%, agregaríamos una capa de memoria distribuida con <strong>Azure Cache for Redis</strong> para atender consultas en &lt; 2 ms, y desplegaríamos los bundles estáticos en <strong>Azure CDN</strong> para absorción masiva de tráfico.
+              En Azure escalaríamos horizontalmente mediante <strong>Virtual Machine Scale Sets (VMSS)</strong> con balanceador de carga automático ante CPU &gt; 70%, agregaríamos una capa de memoria distribuida con <strong>Azure Cache for Redis</strong> para atender consultas en &lt; 2 ms, y desplegaríamos los bundles estáticos en <strong>Azure CDN / Front Door</strong> para absorción masiva de tráfico global.
             </p>
           </div>
         </div>
       </div>
 
-      {/* 5. Roles of 4 Members */}
+      {/* 5. Roles of 3 Members (Official Team) */}
       <div className="game-card p-6 sm:p-8 bg-white dark:bg-[#13141a] space-y-6">
         <div>
           <h3 className="font-display text-2xl font-black text-zinc-950 dark:text-white flex items-center gap-3">
             <Users className="w-6 h-6 text-zinc-500" />
-            ORGANIZACIÓN DEL EQUIPO (4 INTEGRANTES)
+            ORGANIZACIÓN DEL EQUIPO (3 INTEGRANTES)
           </h3>
           <p className="text-sm text-zinc-500 font-sans font-medium mt-1">
             Distribución técnica de responsabilidades según la Sección 8 de la pauta.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="p-5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 space-y-2">
-            <span className="font-display font-black text-xs text-blue-500">INTEGRANTE 1</span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="p-6 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 space-y-2">
+            <span className="font-display font-black text-xs text-blue-500 uppercase">FABIÁN MORA</span>
             <div className="font-display font-black text-base text-zinc-950 dark:text-white">
-              Interfaz & UX (Frontend)
+              Interfaz & Experiencia (UI/UX)
             </div>
             <p className="text-xs font-sans text-zinc-500 font-medium leading-relaxed">
-              Desarrollo de SPA en React 18, Tailwind CSS, mapa visual de cupos, terminal de reservas con pases QR y accesibilidad.
+              Desarrollo de SPA reactiva en React 18 con Vite y Tailwind CSS. Implementación del mapa interactivo de cupos, animaciones vehiculares, terminal de reservas con emisión de Pase QR y accesibilidad responsive.
             </p>
           </div>
 
-          <div className="p-5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 space-y-2">
-            <span className="font-display font-black text-xs text-emerald-500">INTEGRANTE 2</span>
+          <div className="p-6 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 space-y-2">
+            <span className="font-display font-black text-xs text-emerald-500 uppercase">AGUSTÍN CAÑAS</span>
             <div className="font-display font-black text-base text-zinc-950 dark:text-white">
-              Arquitectura & Backend
+              Arquitectura & Lógica de Negocio
             </div>
             <p className="text-xs font-sans text-zinc-500 font-medium leading-relaxed">
-              Definición de capas de software, controladores API REST, manejo de excepciones HTTP y auditoría técnica.
+              Definición y documentación de las 4 capas de software, diseño de controladores API REST, motor de reglas de negocio (validación de patentes chilenas, cálculo de tarificación a $35 CLP/min) y trazabilidad del flujo de solicitudes.
             </p>
           </div>
 
-          <div className="p-5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 space-y-2">
-            <span className="font-display font-black text-xs text-amber-500">INTEGRANTE 3</span>
+          <div className="p-6 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 space-y-2">
+            <span className="font-display font-black text-xs text-purple-500 uppercase">PAUL FERRADA</span>
             <div className="font-display font-black text-base text-zinc-950 dark:text-white">
-              Lógica CRUD & Dominio
+              Datos, Integración & Cloud Azure
             </div>
             <p className="text-xs font-sans text-zinc-500 font-medium leading-relaxed">
-              Implementación de operaciones CRUD (Create, Read, Update, Delete), validación de patentes chilenas y tarificación ($35/min).
-            </p>
-          </div>
-
-          <div className="p-5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 space-y-2">
-            <span className="font-display font-black text-xs text-purple-500">INTEGRANTE 4</span>
-            <div className="font-display font-black text-base text-zinc-950 dark:text-white">
-              Cloud & Operaciones (Azure)
-            </div>
-            <p className="text-xs font-sans text-zinc-500 font-medium leading-relaxed">
-              Aprovisionamiento de VM en Azure, Windows Server 2022, instalación de IIS con ARR, reglas de NSG y resolución DNS FQDN.
+              Persistencia de datos en la nube con Firebase Firestore (proyecto nubarda), aprovisionamiento de Máquina Virtual Windows Server 2022 en Microsoft Azure, servidor IIS 10.0, reglas NSG y resolución FQDN pública.
             </p>
           </div>
         </div>
