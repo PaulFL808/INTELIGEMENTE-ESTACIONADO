@@ -122,7 +122,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
           }`}>
             {selectedRole === 'admin' ? (
               <p className="text-zinc-600 dark:text-zinc-300">
-                Acceso a gestión de estacionamiento, métricas y control de barreras.
+                Acceso a gestión de estacionamiento, métricas, arquitectura cloud y control de barreras.
               </p>
             ) : (
               <p className="text-zinc-600 dark:text-zinc-300">

@@ -34,7 +34,7 @@ export default function Header({
     { id: 'reserva', label: 'Reservar', icon: CalendarClock, adminOnly: false },
     { id: 'crud', label: 'Gestión', icon: Database, adminOnly: true },
     { id: 'dashboard', label: 'Métricas', icon: Radio, adminOnly: true },
-    { id: 'arquitectura', label: 'Arquitectura', icon: Layers, adminOnly: false },
+    { id: 'arquitectura', label: 'Arquitectura', icon: Layers, adminOnly: true },
   ];
 
   // Filtro estricto: el usuario normal solo ve las opciones permitidas

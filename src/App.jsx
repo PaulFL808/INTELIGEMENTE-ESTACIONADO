@@ -43,7 +43,7 @@ export default function App() {
 
   // Si el usuario normal de alguna manera intenta acceder a crud o dashboard, redirigir a maqueta
   useEffect(() => {
-    if (!isAdmin && (currentTab === 'crud' || currentTab === 'dashboard')) {
+    if (!isAdmin && (currentTab === 'crud' || currentTab === 'dashboard' || currentTab === 'arquitectura')) {
       setCurrentTab('maqueta');
     }
   }, [isAdmin, currentTab]);
@@ -319,7 +319,7 @@ export default function App() {
           />
         )}
 
-        {currentTab === 'arquitectura' && (
+        {currentTab === 'arquitectura' && isAdmin && (
           <ArchitectureDefense />
         )}
       </main>
