@@ -45,10 +45,10 @@ export default function ArchitectureDefense() {
       <div className="game-card p-6 sm:p-8 bg-white dark:bg-[#13141a] flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <span className="text-xs font-display font-black tracking-wider uppercase text-emerald-600 dark:text-emerald-400">
-            DEFENSA TÉCNICA · PAUTA DE EVALUACIÓN OFICIAL (SANTO TOMÁS)
+            DOCUMENTACIÓN TÉCNICA
           </span>
           <h2 className="text-3xl sm:text-4xl font-display font-black text-zinc-950 dark:text-white mt-1">
-            ARQUITECTURA DE SISTEMAS & AZURE IIS
+            Arquitectura & Plataforma Cloud
           </h2>
           <p className="text-base text-zinc-600 dark:text-zinc-400 font-sans font-medium mt-1 max-w-2xl">
             Trazabilidad en tiempo real, desglose de capas de software y verificación de infraestructura en Windows Server 2022 con IIS y Firebase Firestore.
@@ -57,7 +57,7 @@ export default function ArchitectureDefense() {
 
         <div className="px-4 py-2.5 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-display font-black text-xs flex items-center gap-2">
           <ShieldCheck className="w-5 h-5 text-emerald-600" />
-          100% CUMPLIMIENTO DE RÚBRICA
+          Chile Central · Activo
         </div>
       </div>
 
@@ -209,7 +209,7 @@ export default function ArchitectureDefense() {
               step: 4,
               title: '4. Persistencia Cloud',
               desc: selectedFlowType === 'reservation' ? 'Guarda reserva en Firestore y emite QR.' : 'Actualiza estado a Disponible en Firestore.',
-              tech: 'Firebase Firestore (nubarda)',
+              tech: 'Firebase Firestore',
               icon: Database,
             },
             {
@@ -312,7 +312,7 @@ export default function ArchitectureDefense() {
               CAPA 4: PERSISTENCIA CLOUD EN TIEMPO REAL
             </span>
             <h4 className="font-display text-lg font-black text-zinc-950 dark:text-white">
-              Google Cloud / Firebase Firestore (nubarda)
+              Google Cloud / Firebase Firestore
             </h4>
             <p className="text-sm font-sans font-medium text-zinc-600 dark:text-zinc-400 leading-relaxed">
               Base de datos NoSQL con sincronización en tiempo real vía WebSockets (onSnapshot). Colecciones: <code>parking_slots</code>, <code>reservations</code> y <code>audit_logs</code>.
@@ -326,10 +326,10 @@ export default function ArchitectureDefense() {
         <div>
           <h3 className="font-display text-2xl font-black text-zinc-950 dark:text-white flex items-center gap-3">
             <HelpCircle className="w-6 h-6 text-zinc-500" />
-            RESPUESTAS CLAVE PARA LA DEFENSA TÉCNICA (RÚBRICA DE EVALUACIÓN)
+            Decisiones Técnicas de Arquitectura
           </h3>
           <p className="text-sm text-zinc-500 font-sans font-medium mt-1">
-            Argumentación técnica formal para responder ante la comisión académica de Santo Tomás.
+            Principales fundamentos de diseño, rendimiento y resiliencia de la solución.
           </p>
         </div>
 
@@ -362,7 +362,7 @@ export default function ArchitectureDefense() {
             ORGANIZACIÓN DEL EQUIPO (4 INTEGRANTES)
           </h3>
           <p className="text-sm text-zinc-500 font-sans font-medium mt-1">
-            Distribución técnica de responsabilidades según la Sección 8 de la pauta de evaluación oficial.
+            Distribución de responsabilidades y especialidades del equipo de desarrollo.
           </p>
         </div>
 

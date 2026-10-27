@@ -332,15 +332,15 @@ export default function App() {
               AURA SMART PARKING
             </span>
             <span>·</span>
-            <span>Arquitectura de Sistemas & Cloud Computing (IPST)</span>
+            <span>Smart Parking IoT</span>
           </div>
 
           <div className="flex items-center gap-4 font-mono text-[11px]">
-            <span>SESIÓN: {currentUser?.roleLabel || 'Usuario Normal'}</span>
+            <span>Rol: {isAdmin ? 'Administrador' : 'Conductor'}</span>
             <span>·</span>
-            <span>FIREBASE FIRESTORE: NUBARDA</span>
+            <span>Cloud Database</span>
             <span>·</span>
-            <span>AZURE VM + IIS</span>
+            <span>Azure Chile Central</span>
             {isAdmin && (
               <>
                 <span>·</span>

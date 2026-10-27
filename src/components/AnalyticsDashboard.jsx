@@ -74,20 +74,20 @@ export default function AnalyticsDashboard({ state, logs = [] }) {
       <div className="game-card p-6 sm:p-8 bg-white dark:bg-[#13141a] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <span className="text-xs font-display font-black tracking-wider uppercase text-emerald-600 dark:text-emerald-400">
-            TELEMETRÍA EN TIEMPO REAL · AZURE CLOUD
+            Métricas del Sistema
           </span>
           <h2 className="text-3xl sm:text-4xl font-display font-black text-zinc-950 dark:text-white mt-1">
-            DASHBOARD & MÉTRICAS
+            Panel de Rendimiento
           </h2>
           <p className="text-base text-zinc-600 dark:text-zinc-400 font-sans font-medium mt-1">
-            Métricas de ocupación y auditoría de eventos en vivo.
+            Indicadores de ocupación, afluencia y registro de actividad.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 border-2 border-zinc-200 dark:border-zinc-700 font-display font-black text-xs flex items-center gap-2">
             <Activity className="w-4 h-4 text-emerald-500 animate-pulse" />
-            FRECUENCIA: 1000 MS
+            Sincronizado
           </div>
         </div>
       </div>

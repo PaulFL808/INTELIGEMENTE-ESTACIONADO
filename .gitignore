@@ -24,3 +24,7 @@ yarn-debug.log*
 # Archivos del sistema operativo
 .DS_Store
 Thumbs.db
+
+# Paquete de despliegue Azure
+DESPLIEGUE_AZURE_AURA*
+

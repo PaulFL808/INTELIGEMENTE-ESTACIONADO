@@ -102,7 +102,7 @@ export default function CrudOperations({
         driverName: editDriver,
       });
 
-      addCrudLog('PUT', `/api/parking/slots/${editingSlot.id}`, 200, `Actualizado ${editingSlot.code}: ${editStatus.toUpperCase()} [UPDATE]`);
+      addCrudLog('PUT', `/api/parking/slots/${editingSlot.id}`, 200, `Actualizado ${editingSlot.code}: ${editStatus.toUpperCase()} Editar`);
       setEditingSlot(null);
     } catch (err) {
       alert(err.message || 'Error al actualizar registro');
@@ -133,7 +133,7 @@ export default function CrudOperations({
   };
 
   const handleDeleteRecord = async (slot) => {
-    if (!window.confirm(`¿Confirmas la eliminación/liberación del registro en ${slot.code}? [DELETE]`)) {
+    if (!window.confirm(`¿Confirmas la eliminación/liberación del registro en ${slot.code}? Liberar`)) {
       return;
     }
 
@@ -180,15 +180,12 @@ export default function CrudOperations({
       <div className="game-card p-6 sm:p-8 bg-white dark:bg-[#13141a]">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-display font-bold text-xs uppercase">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              PAUTA DE EVALUACIÓN · REQUISITO TÉCNICO
-            </div>
+            
             <h2 className="text-3xl sm:text-4xl font-display font-black text-zinc-950 dark:text-white tracking-tight">
-              OPERACIONES CRUD EN MICROSOFT AZURE
+              Gestión de Estacionamiento
             </h2>
             <p className="text-base text-zinc-600 dark:text-zinc-400 font-sans font-medium max-w-3xl">
-              Control total de los registros del estacionamiento: creación de reservas, consulta en vivo, modificación de datos y liberación con facturación.
+              Administración de plazas, asignaciones vehiculares y liquidación de tarifas.
             </p>
           </div>
 
@@ -202,7 +199,7 @@ export default function CrudOperations({
             className="py-3.5 px-6 rounded-xl font-display text-xs font-black uppercase tracking-wide bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 hover:opacity-90 active:scale-95 transition-all shadow-md flex items-center justify-center gap-2"
           >
             <PlusCircle className="w-5 h-5 text-emerald-400" />
-            Nuevo Registro [CREATE]
+            Nueva Asignación
           </button>
         </div>
 
@@ -210,7 +207,7 @@ export default function CrudOperations({
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-6 pt-6 border-t-2 border-zinc-100 dark:border-zinc-800">
           <div className="p-3.5 rounded-xl bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/60">
             <span className="text-[10px] font-display font-black text-blue-700 dark:text-blue-400 uppercase block">
-              [CREATE] · POST
+              Registro
             </span>
             <span className="text-xs font-bold text-zinc-900 dark:text-white mt-1 block">
               Registrar Reserva / Entrada
@@ -222,7 +219,7 @@ export default function CrudOperations({
 
           <div className="p-3.5 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/60">
             <span className="text-[10px] font-display font-black text-emerald-700 dark:text-emerald-400 uppercase block">
-              [READ] · GET
+              Consulta
             </span>
             <span className="text-xs font-bold text-zinc-900 dark:text-white mt-1 block">
               Consultar y Filtrar Registros
@@ -234,7 +231,7 @@ export default function CrudOperations({
 
           <div className="p-3.5 rounded-xl bg-amber-50/60 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/60">
             <span className="text-[10px] font-display font-black text-amber-700 dark:text-amber-400 uppercase block">
-              [UPDATE] · PUT
+              Edición
             </span>
             <span className="text-xs font-bold text-zinc-900 dark:text-white mt-1 block">
               Modificar Estado y Datos
@@ -246,7 +243,7 @@ export default function CrudOperations({
 
           <div className="p-3.5 rounded-xl bg-red-50/60 dark:bg-red-950/30 border border-red-200 dark:border-red-900/60">
             <span className="text-[10px] font-display font-black text-red-700 dark:text-red-400 uppercase block">
-              [DELETE] · DELETE
+              Salida / Cobro
             </span>
             <span className="text-xs font-bold text-zinc-900 dark:text-white mt-1 block">
               Liberar Espacio y Cobrar
@@ -384,7 +381,7 @@ export default function CrudOperations({
                             className="py-1.5 px-3 rounded-lg font-display text-[11px] font-bold uppercase bg-emerald-600 hover:bg-emerald-500 text-white active:scale-95 transition-all shadow-sm flex items-center gap-1.5"
                           >
                             <PlusCircle className="w-3.5 h-3.5" />
-                            [CREATE] Asignar
+                            Asignar
                           </button>
                         ) : (
                           <>
@@ -423,11 +420,11 @@ export default function CrudOperations({
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
             <h4 className="font-display text-sm font-bold text-white tracking-wide">
-              CONSOLA DE AUDITORÍA CRUD (EVIDENCIA EN TIEMPO REAL)
+              Registro de Operaciones
             </h4>
           </div>
           <span className="text-xs text-zinc-400 font-sans">
-            Comprobación de peticiones HTTP en Microsoft Azure IIS
+            Trazabilidad de solicitudes en el servidor.
           </span>
         </div>
 
