@@ -12,10 +12,8 @@ import {
   RefreshCw,
   Car,
   Server,
-  Lock,
   KeyRound,
-  LogOut,
-  User
+  LogOut
 } from 'lucide-react';
 
 export default function Header({ 
@@ -32,7 +30,8 @@ export default function Header({
 }) {
   const isAdmin = currentUser?.role === 'admin';
 
-  const tabs = [
+  // Definición de pestañas del sistema
+  const allTabs = [
     { id: 'maqueta', label: 'Estacionamiento 3D', icon: LayoutDashboard, adminOnly: false },
     { id: 'reserva', label: 'Reservar Cupo', icon: CalendarClock, adminOnly: false },
     { id: 'crud', label: 'Operaciones CRUD', icon: Database, adminOnly: true },
@@ -40,13 +39,8 @@ export default function Header({
     { id: 'arquitectura', label: 'Azure & IIS', icon: Layers, adminOnly: false },
   ];
 
-  const handleTabClick = (tab) => {
-    if (tab.adminOnly && !isAdmin) {
-      setCurrentTab(tab.id); // Allows displaying the Access Restricted banner with 1-click admin login
-    } else {
-      setCurrentTab(tab.id);
-    }
-  };
+  // Filtro estricto: el usuario normal NI SIQUIERA ve las opciones de CRUD ni Dashboard
+  const visibleTabs = allTabs.filter(tab => !tab.adminOnly || isAdmin);
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/95 dark:bg-[#090a0f]/95 border-b-2 border-zinc-200 dark:border-zinc-800 transition-colors duration-300 shadow-sm">
@@ -113,30 +107,22 @@ export default function Header({
 
         {/* Wide Pill Navigation for Large Screens */}
         <nav className="hidden xl:flex items-center bg-zinc-100 dark:bg-zinc-900 p-1.5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800">
-          {tabs.map(tab => {
+          {visibleTabs.map(tab => {
             const Icon = tab.icon;
             const isActive = currentTab === tab.id;
-            const isLocked = tab.adminOnly && !isAdmin;
 
             return (
               <button
                 key={tab.id}
-                onClick={() => handleTabClick(tab)}
-                className={`relative flex items-center gap-2 px-4 py-2 rounded-xl font-display text-xs font-extrabold uppercase tracking-wide transition-all duration-200 ${
+                onClick={() => setCurrentTab(tab.id)}
+                className={`relative flex items-center gap-2 px-5 py-2 rounded-xl font-display text-xs font-extrabold uppercase tracking-wide transition-all duration-200 ${
                   isActive
                     ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 shadow-md scale-[1.02]'
-                    : isLocked
-                    ? 'text-zinc-400 dark:text-zinc-600 hover:text-zinc-700 dark:hover:text-zinc-400'
                     : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-white dark:text-zinc-950' : isLocked ? 'text-zinc-400' : 'text-zinc-500'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-white dark:text-zinc-950' : 'text-zinc-500'}`} />
                 <span>{tab.label}</span>
-                {isLocked && (
-                  <span className="flex items-center text-[10px] text-amber-500 dark:text-amber-400 ml-0.5">
-                    <Lock className="w-3 h-3" />
-                  </span>
-                )}
               </button>
             );
           })}
@@ -208,26 +194,22 @@ export default function Header({
 
       {/* Mobile / Tablet Horizontal Navigation Tabs */}
       <div className="xl:hidden overflow-x-auto border-t border-zinc-200 dark:border-zinc-800 px-4 py-2 flex items-center gap-2 scrollbar-none">
-        {tabs.map(tab => {
+        {visibleTabs.map(tab => {
           const Icon = tab.icon;
           const isActive = currentTab === tab.id;
-          const isLocked = tab.adminOnly && !isAdmin;
 
           return (
             <button
               key={tab.id}
-              onClick={() => handleTabClick(tab)}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl font-display text-xs font-bold whitespace-nowrap transition-all ${
+              onClick={() => setCurrentTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-xl font-display text-xs font-bold whitespace-nowrap transition-all ${
                 isActive
-                  ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950'
-                  : isLocked
-                  ? 'bg-zinc-100/60 dark:bg-zinc-900 text-zinc-400 dark:text-zinc-500'
+                  ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 shadow-sm'
                   : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300'
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
               <span>{tab.label}</span>
-              {isLocked && <Lock className="w-3 h-3 text-amber-500 ml-0.5" />}
             </button>
           );
         })}

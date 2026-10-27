@@ -8,13 +8,6 @@ import ArchitectureDefense from './components/ArchitectureDefense';
 import LoginModal from './components/LoginModal';
 import { getCurrentUser, logout } from './services/auth';
 import { 
-  ShieldAlert, 
-  KeyRound, 
-  Car, 
-  BarChart3, 
-  Database 
-} from 'lucide-react';
-import { 
   getParkingState, 
   getLogs, 
   reserveSlot, 
@@ -48,6 +41,13 @@ export default function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const isAdmin = currentUser?.role === 'admin';
 
+  // Si el usuario normal de alguna manera intenta acceder a crud o dashboard, redirigir a maqueta
+  useEffect(() => {
+    if (!isAdmin && (currentTab === 'crud' || currentTab === 'dashboard')) {
+      setCurrentTab('maqueta');
+    }
+  }, [isAdmin, currentTab]);
+
   const showToast = (text, type = 'info') => {
     setToastMessage({ text, type });
     setTimeout(() => setToastMessage(null), 4000);
@@ -56,10 +56,8 @@ export default function App() {
   const handleLogout = () => {
     const guest = logout();
     setCurrentUser(guest);
+    setCurrentTab('maqueta');
     showToast('Sesión de Administrador cerrada. Modo Conductor activado.', 'info');
-    if (currentTab === 'crud' || currentTab === 'dashboard') {
-      setCurrentTab('maqueta');
-    }
   };
 
   const handleLoginSuccess = (user) => {
@@ -302,93 +300,23 @@ export default function App() {
           />
         )}
 
-        {/* Tab CRUD: Only Admin */}
-        {currentTab === 'crud' && (
-          isAdmin ? (
-            <CrudOperations
-              state={parkingState}
-              onReserveClick={handleReserveClick}
-              onReleaseClick={handleReleaseClick}
-              onUpdateSlot={handleUpdateSlot}
-              onRefresh={handleManualRefresh}
-            />
-          ) : (
-            <div className="game-card p-8 sm:p-12 bg-white dark:bg-[#13141c] text-center max-w-2xl mx-auto my-8 border-2 border-amber-300 dark:border-amber-800/80 shadow-2xl space-y-6 animate-fadeIn">
-              <div className="w-20 h-20 rounded-3xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto border-2 border-amber-300 dark:border-amber-700 shadow-md">
-                <ShieldAlert className="w-10 h-10" />
-              </div>
-              <div className="space-y-2">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 font-display font-bold text-xs uppercase border border-amber-200 dark:border-amber-800">
-                  ACCESO RESTRINGIDO
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-display font-black text-zinc-950 dark:text-white">
-                  Operaciones CRUD Exclusivas para Administradores
-                </h3>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 font-sans max-w-lg mx-auto leading-relaxed">
-                  El <strong>Usuario Normal</strong> tiene permisos para consultar plazas y reservar cupos. Para crear, actualizar o eliminar registros en la base de datos Firestore y el servidor Azure, debes autenticarte como Administrador.
-                </p>
-              </div>
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <button
-                  onClick={() => setIsLoginModalOpen(true)}
-                  className="w-full sm:w-auto py-3 px-6 rounded-xl font-display text-xs font-bold uppercase tracking-wider bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 active:scale-95 transition-all shadow-md flex items-center justify-center gap-2"
-                >
-                  <KeyRound className="w-4 h-4 text-amber-400 dark:text-amber-500" />
-                  <span>Iniciar Sesión como Administrador</span>
-                </button>
-                <button
-                  onClick={() => setCurrentTab('maqueta')}
-                  className="w-full sm:w-auto py-3 px-6 rounded-xl font-display text-xs font-bold uppercase border-2 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 transition-all flex items-center justify-center gap-1.5"
-                >
-                  <Car className="w-4 h-4" />
-                  <span>Ver Estacionamiento</span>
-                </button>
-              </div>
-            </div>
-          )
+        {/* Tab CRUD: Solo visible y ejecutable para el Administrador */}
+        {currentTab === 'crud' && isAdmin && (
+          <CrudOperations
+            state={parkingState}
+            onReserveClick={handleReserveClick}
+            onReleaseClick={handleReleaseClick}
+            onUpdateSlot={handleUpdateSlot}
+            onRefresh={handleManualRefresh}
+          />
         )}
 
-        {/* Tab Dashboard: Only Admin */}
-        {currentTab === 'dashboard' && (
-          isAdmin ? (
-            <AnalyticsDashboard
-              state={parkingState}
-              logs={logs}
-            />
-          ) : (
-            <div className="game-card p-8 sm:p-12 bg-white dark:bg-[#13141c] text-center max-w-2xl mx-auto my-8 border-2 border-purple-300 dark:border-purple-800/80 shadow-2xl space-y-6 animate-fadeIn">
-              <div className="w-20 h-20 rounded-3xl bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 flex items-center justify-center mx-auto border-2 border-purple-300 dark:border-purple-700 shadow-md">
-                <BarChart3 className="w-10 h-10" />
-              </div>
-              <div className="space-y-2">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-purple-50 dark:bg-purple-950/50 text-purple-800 dark:text-purple-300 font-display font-bold text-xs uppercase border border-purple-200 dark:border-purple-800">
-                  DASHBOARD ANALÍTICO PROTEGIDO
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-display font-black text-zinc-950 dark:text-white">
-                  Métricas de Ocupación e Ingresos para Administrador
-                </h3>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 font-sans max-w-lg mx-auto leading-relaxed">
-                  Las estadísticas de ocupación, curvas de horas punta, facturación total y el registro de auditoría del sistema son de acceso reservado para la administración del recinto.
-                </p>
-              </div>
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <button
-                  onClick={() => setIsLoginModalOpen(true)}
-                  className="w-full sm:w-auto py-3 px-6 rounded-xl font-display text-xs font-bold uppercase tracking-wider bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 active:scale-95 transition-all shadow-md flex items-center justify-center gap-2"
-                >
-                  <KeyRound className="w-4 h-4 text-purple-400" />
-                  <span>Desbloquear con Cuenta Admin</span>
-                </button>
-                <button
-                  onClick={() => setCurrentTab('maqueta')}
-                  className="w-full sm:w-auto py-3 px-6 rounded-xl font-display text-xs font-bold uppercase border-2 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 transition-all flex items-center justify-center gap-1.5"
-                >
-                  <Car className="w-4 h-4" />
-                  <span>Ver Estacionamiento</span>
-                </button>
-              </div>
-            </div>
-          )
+        {/* Tab Dashboard: Solo visible y ejecutable para el Administrador */}
+        {currentTab === 'dashboard' && isAdmin && (
+          <AnalyticsDashboard
+            state={parkingState}
+            logs={logs}
+          />
         )}
 
         {currentTab === 'arquitectura' && (
