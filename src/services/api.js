@@ -1,3 +1,5 @@
+import { getAuthHeaders } from './auth';
+
 const API_BASE = '/api/parking';
 
 // Estado local fallback en caso de ejecutarse en modo estático sin backend Express
@@ -150,7 +152,7 @@ export async function reserveSlot(slotId, vehiclePlate, driverName, estimatedMin
   try {
     const res = await fetch(`${API_BASE}/reserve`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
       body: JSON.stringify({ slotId, vehiclePlate, driverName, estimatedMinutes }),
     });
     const data = await res.json();
@@ -186,7 +188,7 @@ export async function releaseSlot(slotId) {
   try {
     const res = await fetch(`${API_BASE}/release`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
       body: JSON.stringify({ slotId }),
     });
     const data = await res.json();
@@ -235,7 +237,7 @@ export async function sendTelemetry(slotId, distanceCm, source = 'Arduino UNO / 
   try {
     const res = await fetch(`${API_BASE}/telemetry`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
       body: JSON.stringify({ slotId, distanceCm, source }),
     });
     return await res.json();
@@ -261,7 +263,7 @@ export async function toggleBarrier(gate, action = 'toggle') {
   try {
     const res = await fetch(`${API_BASE}/barrier`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
       body: JSON.stringify({ gate, action }),
     });
     return await res.json();
@@ -290,7 +292,7 @@ export async function updateSlot(slotId, updateData) {
   try {
     const res = await fetch(`${API_BASE}/slots/${slotId}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
       body: JSON.stringify(updateData),
     });
     const data = await res.json();
@@ -310,6 +312,7 @@ export async function deleteSlot(slotId) {
   try {
     const res = await fetch(`${API_BASE}/slots/${slotId}`, {
       method: 'DELETE',
+      headers: { ...getAuthHeaders() },
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Error al eliminar registro');

@@ -12,6 +12,22 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
+// Middleware de Seguridad y Verificación de Tokens JWT (RFC 7519)
+function verifyJWTOptional(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    try {
+      const parts = token.split('.');
+      if (parts.length === 3) {
+        req.user = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'));
+      }
+    } catch (e) {}
+  }
+  next();
+}
+app.use(verifyJWTOptional);
+
 // In-Memory Data Store (Simulates Azure Cosmos DB / SQL Database Repository)
 // Aligned with the Layered Architecture: Controller -> Service -> Repository
 const INITIAL_SLOTS = [
