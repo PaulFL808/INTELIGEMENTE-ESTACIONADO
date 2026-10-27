@@ -351,3 +351,35 @@ Estructura ajustada a la Sección 10 de la pauta para los 3 integrantes:
   * Respuesta a la pregunta de escalabilidad: cómo pasar de 100 a 10.000 usuarios con Azure VMSS, Redis Cache y Azure CDN.
 * **Minuto 13:00 a 15:00 — Cierre y Conclusiones (Los 3 Integrantes):**
   * Conclusiones del proyecto, agradecimientos y apertura para la ronda de preguntas de los profesores.
+
+
+---
+
+## 8. SISTEMA DE AUTENTICACIÓN Y CONTROL DE ACCESO BASADO EN ROLES (RBAC)
+
+Para cumplir con el requerimiento de seguridad y segregación de perfiles, la solución incorpora un sistema de autenticación basado en roles implementado en `src/services/auth.js` y `src/components/LoginModal.jsx`:
+
+### 8.1 Matriz de Permisos por Rol
+
+| Módulo / Funcionalidad | Conductor (Usuario Normal) | Administrador del Sistema |
+|---|:---:|:---:|
+| **Consultar Disponibilidad de Cupos en Vivo (3D)** | ✅ Permitido | ✅ Permitido |
+| **Reservar Plaza con Emisión de Pase QR** | ✅ Permitido | ✅ Permitido |
+| **Control Manual de Barreras (Entrada/Salida)** | ❌ Bloqueado | ✅ Permitido |
+| **Simulación de Detección por Sensores (cm)** | ❌ Bloqueado | ✅ Permitido |
+| **Liberación Forzada de Cupos y Liquidación** | ❌ Bloqueado | ✅ Permitido |
+| **Panel de Operaciones CRUD en Base de Datos** | ❌ Bloqueado (Muestra banner de restricción) | ✅ Acceso Total (CREATE, READ, UPDATE, DELETE) |
+| **Dashboard de Métricas, Horas Punta y Facturación** | ❌ Bloqueado (Protegido) | ✅ Acceso Total en Tiempo Real |
+| **Registro de Auditoría del Sistema (Logs)** | ❌ Bloqueado | ✅ Acceso Total |
+
+### 8.2 Cuentas Preconfiguradas para la Demostración
+
+* **Administrador:**
+  * Usuario: `admin` (o `admin@aura.cl`)
+  * Contraseña: `admin`
+  * Nombre: *Paul / Fabián / Agustín*
+* **Usuario Normal (Conductor):**
+  * Usuario: `usuario` (o `conductor@aura.cl`)
+  * Contraseña: `usuario`
+  * Nombre: *Conductor Particular*
+* **Botones de Acceso Rápido:** El modal de inicio de sesión incluye botones directos *"⚡ Conductor Demo"* y *"⚡ Admin Demo"* para alternar entre perfiles en 1 segundo durante la presentación ante los profesores evaluadores.

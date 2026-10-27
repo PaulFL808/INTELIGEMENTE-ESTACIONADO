@@ -11,7 +11,11 @@ import {
   Sun,
   RefreshCw,
   Car,
-  Server
+  Server,
+  Lock,
+  KeyRound,
+  LogOut,
+  User
 } from 'lucide-react';
 
 export default function Header({ 
@@ -21,15 +25,28 @@ export default function Header({
   setDarkMode, 
   onRefresh,
   isRefreshing,
-  isFirebaseConnected
+  isFirebaseConnected,
+  currentUser,
+  onOpenLogin,
+  onLogout
 }) {
+  const isAdmin = currentUser?.role === 'admin';
+
   const tabs = [
-    { id: 'maqueta', label: 'Estacionamiento 3D', icon: LayoutDashboard },
-    { id: 'reserva', label: 'Reservar Cupo', icon: CalendarClock },
-    { id: 'crud', label: 'Operaciones CRUD', icon: Database },
-    { id: 'dashboard', label: 'Dashboard & Métricas', icon: Radio },
-    { id: 'arquitectura', label: 'Azure & IIS', icon: Layers },
+    { id: 'maqueta', label: 'Estacionamiento 3D', icon: LayoutDashboard, adminOnly: false },
+    { id: 'reserva', label: 'Reservar Cupo', icon: CalendarClock, adminOnly: false },
+    { id: 'crud', label: 'Operaciones CRUD', icon: Database, adminOnly: true },
+    { id: 'dashboard', label: 'Dashboard & Métricas', icon: Radio, adminOnly: true },
+    { id: 'arquitectura', label: 'Azure & IIS', icon: Layers, adminOnly: false },
   ];
+
+  const handleTabClick = (tab) => {
+    if (tab.adminOnly && !isAdmin) {
+      setCurrentTab(tab.id); // Allows displaying the Access Restricted banner with 1-click admin login
+    } else {
+      setCurrentTab(tab.id);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-white/95 dark:bg-[#090a0f]/95 border-b-2 border-zinc-200 dark:border-zinc-800 transition-colors duration-300 shadow-sm">
@@ -74,7 +91,7 @@ export default function Header({
 
       {/* Main Navigation Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4">
-        {/* Brand identity: Clean modern logo */}
+        {/* Brand identity */}
         <div className="flex items-center gap-3.5 cursor-pointer" onClick={() => setCurrentTab('maqueta')}>
           <div className="w-11 h-11 rounded-2xl bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 flex items-center justify-center shadow-md">
             <Car className="w-6 h-6" />
@@ -99,29 +116,81 @@ export default function Header({
           {tabs.map(tab => {
             const Icon = tab.icon;
             const isActive = currentTab === tab.id;
+            const isLocked = tab.adminOnly && !isAdmin;
+
             return (
               <button
                 key={tab.id}
-                onClick={() => setCurrentTab(tab.id)}
-                className={`relative flex items-center gap-2.5 px-5 py-2 rounded-xl font-display text-xs font-extrabold uppercase tracking-wide transition-all duration-200 ${
+                onClick={() => handleTabClick(tab)}
+                className={`relative flex items-center gap-2 px-4 py-2 rounded-xl font-display text-xs font-extrabold uppercase tracking-wide transition-all duration-200 ${
                   isActive
                     ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 shadow-md scale-[1.02]'
+                    : isLocked
+                    ? 'text-zinc-400 dark:text-zinc-600 hover:text-zinc-700 dark:hover:text-zinc-400'
                     : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-white dark:text-zinc-950' : 'text-zinc-500'}`} />
-                {tab.label}
+                <Icon className={`w-4 h-4 ${isActive ? 'text-white dark:text-zinc-950' : isLocked ? 'text-zinc-400' : 'text-zinc-500'}`} />
+                <span>{tab.label}</span>
+                {isLocked && (
+                  <span className="flex items-center text-[10px] text-amber-500 dark:text-amber-400 ml-0.5">
+                    <Lock className="w-3 h-3" />
+                  </span>
+                )}
               </button>
             );
           })}
         </nav>
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-2">
+        {/* Action Controls & Authentication */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* User Session Pill */}
+          {isAdmin ? (
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={onOpenLogin}
+                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/70 text-purple-900 dark:text-purple-300 border-2 border-purple-200 dark:border-purple-800/80 font-display font-extrabold text-xs shadow-sm hover:scale-[1.02] transition-transform"
+                title="Sesión de Administrador activa. Clic para cambiar"
+              >
+                <ShieldCheck className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                <span className="truncate max-w-[150px]">ADMIN: {currentUser?.name || 'Paul / Fabián / Agustín'}</span>
+              </button>
+
+              <button
+                onClick={onLogout}
+                title="Cerrar sesión de Administrador (Volver a Conductor)"
+                className="px-3 py-2 rounded-xl border-2 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-display text-xs font-bold uppercase transition-all shadow-sm flex items-center gap-1.5"
+              >
+                <LogOut className="w-3.5 h-3.5 text-red-500" />
+                <span className="hidden sm:inline">Salir</span>
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <div 
+                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/70 text-blue-900 dark:text-blue-300 border-2 border-blue-200 dark:border-blue-800/80 font-display font-extrabold text-xs shadow-sm"
+              >
+                <Car className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <span>USUARIO NORMAL</span>
+              </div>
+
+              <button
+                onClick={onOpenLogin}
+                title="Iniciar sesión con cuenta de Administrador"
+                className="px-3.5 py-2 rounded-xl bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-200 font-display text-xs font-bold uppercase tracking-wider transition-all shadow-md active:scale-95 flex items-center gap-1.5"
+              >
+                <KeyRound className="w-3.5 h-3.5 text-amber-400 dark:text-amber-500" />
+                <span>Acceso Admin</span>
+              </button>
+            </div>
+          )}
+
+          <div className="h-6 w-px bg-zinc-200 dark:bg-zinc-800 mx-0.5"></div>
+
           <button
             onClick={onRefresh}
             disabled={isRefreshing}
-            title="Sincronizar"
+            title="Sincronizar Datos"
             className="p-2.5 rounded-xl border-2 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 active:scale-95 transition-all shadow-sm"
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-emerald-500' : ''}`} />
@@ -142,18 +211,23 @@ export default function Header({
         {tabs.map(tab => {
           const Icon = tab.icon;
           const isActive = currentTab === tab.id;
+          const isLocked = tab.adminOnly && !isAdmin;
+
           return (
             <button
               key={tab.id}
-              onClick={() => setCurrentTab(tab.id)}
+              onClick={() => handleTabClick(tab)}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl font-display text-xs font-bold whitespace-nowrap transition-all ${
                 isActive
                   ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950'
+                  : isLocked
+                  ? 'bg-zinc-100/60 dark:bg-zinc-900 text-zinc-400 dark:text-zinc-500'
                   : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300'
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
-              {tab.label}
+              <span>{tab.label}</span>
+              {isLocked && <Lock className="w-3 h-3 text-amber-500 ml-0.5" />}
             </button>
           );
         })}

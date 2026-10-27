@@ -9,7 +9,9 @@ import {
   Clock, 
   CheckCircle2,
   AlertTriangle,
-  KeyRound
+  KeyRound,
+  Lock,
+  ShieldCheck
 } from 'lucide-react';
 
 // Top-Down Stylized Car SVG
@@ -42,7 +44,8 @@ export default function MaquetaView({
   onReserveClick, 
   onReleaseClick, 
   onSimulateDistance, 
-  onToggleBarrier 
+  onToggleBarrier,
+  isAdmin = false
 }) {
   const slots = state?.slots || [];
   const barriers = state?.barriers || {
@@ -85,15 +88,32 @@ export default function MaquetaView({
       <div className="game-card p-6 sm:p-7 bg-white dark:bg-[#13141a]">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-display font-bold text-xs uppercase">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-              EN TIEMPO REAL
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-display font-bold text-xs uppercase">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                EN TIEMPO REAL
+              </span>
+
+              {isAdmin ? (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-purple-100 dark:bg-purple-950/80 text-purple-800 dark:text-purple-300 font-display font-bold text-xs uppercase border border-purple-200 dark:border-purple-800">
+                  <ShieldCheck className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+                  MODO ADMINISTRADOR (CONTROL TOTAL)
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300 font-display font-bold text-xs uppercase border border-blue-200 dark:border-blue-800">
+                  <Car className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                  MODO CONDUCTOR (CONSULTA Y RESERVA)
+                </span>
+              )}
             </div>
+
             <h2 className="text-3xl sm:text-4xl font-display font-black text-zinc-950 dark:text-white tracking-tight">
               ESTACIONAMIENTO 3D
             </h2>
             <p className="text-base text-zinc-600 dark:text-zinc-400 font-sans font-medium">
-              Controla barreras, revisa los 6 espacios y simula autos con un clic.
+              {isAdmin 
+                ? 'Controla barreras, gestiona los 6 espacios y simula sensores con un clic.' 
+                : 'Revisa la disponibilidad de los 6 espacios en tiempo real y reserva tu plaza con pase QR.'}
             </p>
           </div>
 
@@ -180,12 +200,19 @@ export default function MaquetaView({
             ></div>
           </div>
 
-          <button
-            onClick={() => onToggleBarrier('entry')}
-            className="w-full py-3 px-4 rounded-xl font-display text-xs font-bold uppercase tracking-wide bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 hover:opacity-90 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-2"
-          >
-            {barriers.entry?.status === 'open' ? 'Bajar Barrera' : 'Levantar Barrera'}
-          </button>
+          {isAdmin ? (
+            <button
+              onClick={() => onToggleBarrier('entry')}
+              className="w-full py-3 px-4 rounded-xl font-display text-xs font-bold uppercase tracking-wide bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 hover:opacity-90 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-2"
+            >
+              {barriers.entry?.status === 'open' ? 'Bajar Barrera' : 'Levantar Barrera'}
+            </button>
+          ) : (
+            <div className="w-full py-2.5 px-3 rounded-xl bg-zinc-100 dark:bg-zinc-800/70 border border-zinc-200 dark:border-zinc-800 text-zinc-500 text-center font-display text-[11px] font-bold uppercase flex items-center justify-center gap-1.5">
+              <Lock className="w-3.5 h-3.5 text-amber-500" />
+              <span>Control de barrera exclusivo Admin</span>
+            </div>
+          )}
         </div>
 
         {/* LCD Totem Replica */}
@@ -259,12 +286,19 @@ export default function MaquetaView({
             ></div>
           </div>
 
-          <button
-            onClick={() => onToggleBarrier('exit')}
-            className="w-full py-3 px-4 rounded-xl font-display text-xs font-bold uppercase tracking-wide bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 hover:opacity-90 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-2"
-          >
-            {barriers.exit?.status === 'open' ? 'Bajar Barrera' : 'Levantar Barrera'}
-          </button>
+          {isAdmin ? (
+            <button
+              onClick={() => onToggleBarrier('exit')}
+              className="w-full py-3 px-4 rounded-xl font-display text-xs font-bold uppercase tracking-wide bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 hover:opacity-90 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-2"
+            >
+              {barriers.exit?.status === 'open' ? 'Bajar Barrera' : 'Levantar Barrera'}
+            </button>
+          ) : (
+            <div className="w-full py-2.5 px-3 rounded-xl bg-zinc-100 dark:bg-zinc-800/70 border border-zinc-200 dark:border-zinc-800 text-zinc-500 text-center font-display text-[11px] font-bold uppercase flex items-center justify-center gap-1.5">
+              <Lock className="w-3.5 h-3.5 text-amber-500" />
+              <span>Control de barrera exclusivo Admin</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -391,48 +425,70 @@ export default function MaquetaView({
                 {/* Action Buttons */}
                 <div className="p-3.5 bg-white dark:bg-[#13141a]">
                   {isAvailable && (
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        onClick={() => onSimulateDistance(slot.id, 6.2)}
-                        className="py-2.5 px-3 rounded-xl font-display text-xs font-bold uppercase bg-emerald-600 hover:bg-emerald-500 text-white active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"
-                      >
-                        🚗 Estacionar
-                      </button>
+                    isAdmin ? (
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => onSimulateDistance(slot.id, 6.2)}
+                          className="py-2.5 px-3 rounded-xl font-display text-xs font-bold uppercase bg-emerald-600 hover:bg-emerald-500 text-white active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"
+                        >
+                          🚗 Estacionar
+                        </button>
 
+                        <button
+                          onClick={() => onReserveClick(slot)}
+                          className="py-2.5 px-3 rounded-xl font-display text-xs font-bold uppercase bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"
+                        >
+                          📝 Reservar
+                        </button>
+                      </div>
+                    ) : (
                       <button
                         onClick={() => onReserveClick(slot)}
-                        className="py-2.5 px-3 rounded-xl font-display text-xs font-bold uppercase bg-zinc-900 text-white dark:bg-white dark:text-zinc-950 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"
+                        className="w-full py-3 px-4 rounded-xl font-display text-xs font-bold uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white active:scale-95 transition-all shadow-md flex items-center justify-center gap-2"
                       >
-                        📝 Reservar
+                        <Car className="w-4 h-4" />
+                        <span>📝 Reservar esta Plaza</span>
                       </button>
-                    </div>
+                    )
                   )}
 
                   {isOccupied && (
-                    <button
-                      onClick={() => onReleaseClick(slot)}
-                      className="w-full py-2.5 px-3 rounded-xl font-display text-xs font-bold uppercase bg-red-600 hover:bg-red-500 text-white active:scale-95 transition-all shadow-sm flex items-center justify-center gap-2"
-                    >
-                      💨 Retirar Auto / Cobrar
-                    </button>
+                    isAdmin ? (
+                      <button
+                        onClick={() => onReleaseClick(slot)}
+                        className="w-full py-2.5 px-3 rounded-xl font-display text-xs font-bold uppercase bg-red-600 hover:bg-red-500 text-white active:scale-95 transition-all shadow-sm flex items-center justify-center gap-2"
+                      >
+                        💨 Retirar Auto / Cobrar
+                      </button>
+                    ) : (
+                      <div className="py-2.5 px-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 text-red-700 dark:text-red-400 text-center font-display text-xs font-bold uppercase">
+                        ⛔ Plaza Ocupada
+                      </div>
+                    )
                   )}
 
                   {isReserved && (
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        onClick={() => onSimulateDistance(slot.id, 6.2)}
-                        className="py-2.5 px-3 rounded-xl font-display text-xs font-bold uppercase bg-amber-500 hover:bg-amber-400 text-zinc-950 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"
-                      >
-                        🚗 Auto Llega
-                      </button>
+                    isAdmin ? (
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => onSimulateDistance(slot.id, 6.2)}
+                          className="py-2.5 px-3 rounded-xl font-display text-xs font-bold uppercase bg-amber-500 hover:bg-amber-400 text-zinc-950 active:scale-95 transition-all shadow-sm flex items-center justify-center gap-1"
+                        >
+                          🚗 Auto Llega
+                        </button>
 
-                      <button
-                        onClick={() => onReleaseClick(slot)}
-                        className="py-2.5 px-3 rounded-xl font-display text-xs font-bold uppercase border-2 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 active:scale-95 transition-all flex items-center justify-center gap-1"
-                      >
-                        Cancelar
-                      </button>
-                    </div>
+                        <button
+                          onClick={() => onReleaseClick(slot)}
+                          className="py-2.5 px-3 rounded-xl font-display text-xs font-bold uppercase border-2 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 active:scale-95 transition-all flex items-center justify-center gap-1"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="py-2.5 px-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-amber-700 dark:text-amber-400 text-center font-display text-xs font-bold uppercase">
+                        🔒 Reservado con Pase QR
+                      </div>
+                    )
                   )}
                 </div>
               </div>
