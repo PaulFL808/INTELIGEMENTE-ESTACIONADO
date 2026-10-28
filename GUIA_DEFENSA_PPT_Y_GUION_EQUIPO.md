@@ -13,7 +13,7 @@
 |---|---|:---:|:---:|---|
 | **1. Fabián Mora** | Interfaz & Experiencia (UI/UX) | **Diapositivas 1 y 2** | `00:00 - 03:30` (3:30 min) | Saludo oficial, presentación del equipo, desafío urbano (30% tráfico buscando parking) y propuesta de valor AURA. |
 | **2. Agustín Cañas** | Arquitectura & Lógica de Negocio | **Diapositivas 3 y 4** | `03:30 - 07:15` (3:45 min) | Modelo Cliente-Servidor Multi-Capa (4 capas), defensa técnica frente a MVC monolítico, patentes chilenas y tarificación ($35 CLP/min). |
-| **3. Felipe Labarca** | Seguridad, JWT & Persistencia Cloud | **Diapositivas 5 y 6** | `07:15 - 11:00` (3:45 min) | Hardware IoT Arduino UNO R3, seguridad RBAC (Usuario vs Admin), Tokens JWT RFC 7519 y Demostración en Vivo de las 4 operaciones CRUD. |
+| **3. Felipe Labarca** | Seguridad, JWT & Persistencia Cloud | **Diapositivas 5 y 6** | `07:15 - 11:00` (3:45 min) | Telemetría simulada de presencia, seguridad RBAC (Usuario vs Admin), Tokens JWT RFC 7519 y Demostración en Vivo de las 4 operaciones CRUD. |
 | **4. Paul Ferrada** | Infraestructura Cloud & DevOps Azure | **Diapositivas 7, 8, 9 y 10** | `11:00 - 15:00` (4:00 min) | Azure IaaS en Chile Central (VM, Windows Server 2022, IIS 10.0, NSG, DNS), escalabilidad a 10.000 usuarios, síntesis de roles y cierre. |
 
 ---
@@ -105,15 +105,15 @@ Tiempo: Minuto 7:15 a 11:00 | Diapositivas: 5 y 6
 ========================================================================================
 ```
 
-### 📌 Diapositiva 5: 04 · Integración IoT (Hardware, Sensores y Circuito Arduino UNO R3)
+### 📌 Diapositiva 5: 04 · Módulo de Telemetría & Simulación de Sensores de Presencia
 * **Orador:** **Felipe Labarca** (Seguridad & Persistencia Cloud)
 * **Tiempo sugerido:** 1 minuto y medio (7:15 - 8:45)
-* **Objetivo:** Explicar la maqueta física de 70x72 cm, los 8 sensores ultrasónicos y la seguridad criptográfica implementada.
+* **Objetivo:** Explicar el modelo de telemetría y sensores en software cloud, junto con la seguridad criptográfica RBAC y JWT.
 
 > **🎙️ Lo que debe decir Felipe:**
-> *"Muchas gracias, Agustín. Buenos días, profesores. Mi responsabilidad en el proyecto abarca la integración del hardware IoT, la persistencia en la base de datos cloud y la seguridad del sistema.*
+> *"Muchas gracias, Agustín. Buenos días, profesores. Mi responsabilidad en el proyecto abarca la persistencia en la base de datos cloud, la seguridad del sistema y el módulo de telemetría de sensores en tiempo real.
 >
-> *En la maqueta física de 70 por 72 centímetros, contamos con un microcontrolador **Arduino UNO R3** operando con firmware autónomo en C++. El circuito dispone de **8 sensores ultrasónicos HC-SR04**: 6 dedicados a monitorear la distancia de cada plaza individual y 2 en las barreras de acceso. Cuando un vehículo se posiciona a menos de 10 centímetros, el sensor conmuta a estado Ocupado en menos de 50 milisegundos. Además, cuenta con un display LCD 16x2 que muestra los cupos libres de forma autónoma, y servomotores SG90 para las barreras.*
+> *Como decisión de ingeniería, la plataforma web y cloud fue completamente desacoplada de la capa física de hardware, permitiendo que esta solución opere como un software empresarial independiente en Microsoft Azure. En nuestro módulo de telemetría simulamos la detección de presencia vehicular: cuando un sensor reporta una distancia menor a 10 centímetros, el sistema conmuta la plaza a 'Ocupado' en menos de 50 milisegundos y actualiza el conteo global.
 >
 > *Asimismo, implementamos **Seguridad RBAC** (Role-Based Access Control) y **Tokens criptográficos JWT (RFC 7519)** con algoritmo HMAC-SHA256. El sistema discrimina estrictamente dos perfiles:*
 > * El **Usuario Conductor:** Que solo puede visualizar disponibilidad y generar su pase QR (las opciones de administración quedan 100% ocultas del DOM).*
@@ -219,7 +219,7 @@ Tiempo: Minuto 11:00 a 15:00 | Diapositivas: 7, 8, 9 y 10
 | **¿Por qué dicen que es Cliente-Servidor y no MVC?** | **Agustín Cañas** | *"En MVC el servidor renderiza la vista y la devuelve como HTML. En nuestro Modelo Cliente-Servidor Multi-Capa, el Cliente (React) es un programa autónomo que solo consume datos puros (JSON) de los servicios cloud, separando el ciclo de vida del frontend y del backend."* |
 | **¿Cómo protegieron el sistema contra accesos no autorizados?** | **Felipe Labarca** | *"Mediante RBAC y Tokens JWT (RFC 7519) con algoritmo HMAC-SHA256. El token viaja en la cabecera `Authorization: Bearer` en cada petición, y la interfaz oculta completamente las operaciones CRUD y el dashboard para usuarios sin perfil de administrador."* |
 | **¿Por qué eligieron una Máquina Virtual IaaS y no Azure App Service (PaaS)?** | **Paul Ferrada** | *"Porque la pauta de evaluación de la asignatura solicitaba expresamente la administración del sistema operativo (Windows Server 2022) y el servidor web IIS 10.0 con endurecimiento de red en NSG. Sin embargo, nuestra arquitectura está lista para migrar a PaaS o contenedores cuando se requiera."* |
-| **¿Qué pasa si se corta la conexión a internet en el estacionamiento?** | **Felipe Labarca / Agustín Cañas** | *"El microcontrolador Arduino UNO ejecuta su firmware C++ de manera autónoma en el borde (Edge Computing). La pantalla LCD física y las barreras siguen operando localmente, y al reconectarse la red, la cola de eventos se sincroniza con Firestore en la nube."* |
+| **¿Por qué separaron la maqueta/hardware de este proyecto?** | **Felipe Labarca / Agustín Cañas** | *"Para cumplir con el principio de desacoplamiento arquitectónico. Esta solución representa la plataforma Web y Nube empresarial en Microsoft Azure, con persistencia cloud en Firestore y seguridad RBAC/JWT, diseñada para operar de forma autónoma y recibir telemetría de cualquier pasarela de sensores."* |
 | **¿Por qué eligieron $35 pesos el minuto y cómo se cobra?** | **Agustín Cañas / Fabián Mora** | *"Corresponde a la tarifa estándar de mercado chileno (~$2.100 CLP por hora). El controlador calcula el `timestamp` de salida menos el de ingreso en milisegundos, lo convierte a minutos redondeados hacia arriba y genera la liquidación exacta al momento del checkout."* |
 
 ---
